@@ -4,10 +4,10 @@ This custom component for Streamlit allows users to create interactive tables wh
 
 ## Installation
 
-To install the component, run:
+To install the component, download the whl file from /disc folder:
 
 ```bash
-pip install streamlit-clickable-table
+pip install clickable_table-0.0.1-py3-none-any.whl
 ```
 ##  Usage
 Here's a simple example of how to use the Clickable Table component in your Streamlit app:
