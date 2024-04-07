@@ -1,6 +1,6 @@
 # Clickable Table Component for Streamlit
 
-## A Word from the Creator
+## A Word from the Karina
 
 As an enthusiast and advocate for Python and Streamlit, I've always envisioned a future where dataframes and data editors are not just static entities but interactive canvases that respond to our touch. In the realm of data and analytics, the power to drill down into specifics with a simple click, influencing filters and altering visualizations, is not just a convenience—it's a necessity.
 
@@ -14,7 +14,7 @@ The Clickable Table component for Streamlit bridges the gap between static table
 
 ### Installation
 
-To bring interactive tables into your Streamlit applications, install the component using pip:
+To bring interactive tables into your Streamlit applications, download the whl file from the dist folder, install the component using pip:
 
 ```bash
 pip install clickable_table-0.0.1-py3-none-any.whl
