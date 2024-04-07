@@ -1,10 +1,10 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import KlickableTable from "./KlickableTable"
+import ClickableTable from "./ClickableTable"
 
 ReactDOM.render(
   <React.StrictMode>
-    <KlickableTable />
+    <ClickableTable />
   </React.StrictMode>,
   document.getElementById("root")
 )

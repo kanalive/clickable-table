@@ -1,5 +1,5 @@
 import streamlit as st
-from my_component import my_component 
+from clickable_table import clickable_table
 import pandas as pd
 # Add some test code to play with the component while it's in development.
 # During development, we can run this just as we would any other Streamlit
@@ -55,5 +55,5 @@ df.index.name = None
 styled_df = style_dataframe(df, "#C5C5C5", "#C5C5C5")
 html = styled_df.render()
 
-return_value = my_component(key="test", html = html)
+return_value = clickable_table(key="test", html = html)
 st.markdown("Return value from react %s" % return_value)
