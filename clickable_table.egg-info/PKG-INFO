@@ -12,7 +12,7 @@ License-File: LICENSE
 
 # Clickable Table Component for Streamlit
 
-## A Word from the Creator
+## A Word from the Karina
 
 As an enthusiast and advocate for Python and Streamlit, I've always envisioned a future where dataframes and data editors are not just static entities but interactive canvases that respond to our touch. In the realm of data and analytics, the power to drill down into specifics with a simple click, influencing filters and altering visualizations, is not just a convenienceâ€”it's a necessity.
 
@@ -22,11 +22,13 @@ While the wonderful team at Streamlit is paving the way for such interactive fea
 
 The Clickable Table component for Streamlit bridges the gap between static tables and interactive data exploration. It enables users to click on any cell within a table, capture the cell's data, and use it to refine data filters or adjust chart graphs dynamically. This functionality is central to data analysis and dashboard creation.
 
+The Clickable Table component takes full advantage of pandas' powerful `Styler` object. Begin by styling your pandas DataFrame to your heart's content, using the myriad styling options available to you. Once you've crafted the visual representation of your data with colors, conditional formats, and more, the Clickable Table component seamlessly renders your `Styler` object as interactive HTML. With clickable functionality layered on top, each cell in your table becomes an interactive element, allowing users to engage with the data more intuitively.
+
 ## Get Started
 
 ### Installation
 
-To bring interactive tables into your Streamlit applications, install the component using pip:
+To bring interactive tables into your Streamlit applications, download the whl file from the dist folder, install the component using pip:
 
 ```bash
 pip install clickable_table-0.0.1-py3-none-any.whl
@@ -36,24 +38,56 @@ Here's a simple example of how to use the Clickable Table component in your Stre
 
 ```bash
 import streamlit as st
-from streamlit_clickable_table import clickable_table
+from clickable_table import clickable_table
+import pandas as pd
 
-# Sample data for the table
+st.subheader("Test Clickable Table")
+
 data = {
-    'Epoch': [1, 2, 3, 4, 5, 6, 7, 8],
-    '2 Fut': [0.081, -1.164, -1.635, -1.515, -1.460, -1.306, -1.136, -1.222],
-    # Add the rest of your columns here
+'Epoch': ["R 1", "R 2", "R 3", "R 4", "R 5", "R 6", "R 7", "R 8"],
+'C 1': [0.081, -1.164, -1.635, -1.515, -1.460, -1.306, -1.136, -1.222],
+'C 2': [-0.505, 1.461, 1.596, 1.510, 1.406, 1.241, 1.198, 0.932],
+'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261, -1.037, -0.851],
+'C 4': [-1.226, 1.553, 1.552, 1.429, 1.352, 1.150, 0.966, 0.782],
+'C 5': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028, 0.899, None]  
 }
 
-# Convert your data into a pandas DataFrame
+def style_dataframe(df, header_color, index_color):
+    # Function to apply conditional formatting
+    def apply_conditional_formatting(val):
+        if val > 1.5:
+            color = "#FFC0CB"  
+        elif val < -1.5:
+            color = "#90EE90"  
+        else:
+            color = ''
+        return f'background-color: {color}'
+
+    # Define header and index styles
+    styles = [
+        {'selector': 'thead th', 'props': [('background-color', header_color)]},
+        {'selector': 'tbody th', 'props': [('background-color', index_color)]}
+    ]
+
+    # Initialize Styler object with table styles
+    styler = df.style.set_table_styles(styles)
+
+    styler = styler.applymap(apply_conditional_formatting)
+
+    return styler
+
+
+# Creating the DataFrame
 df = pd.DataFrame(data)
+df = df.set_index("Epoch")
+# Suppress the index name to prevent pandas from rendering it as a separate row
+df.index.name = None
+styled_df = style_dataframe(df, "#C5C5C5", "#C5C5C5")
+html = styled_df.render()
 
-# Call the clickable_table function to render your interactive table
-clicked_value = clickable_table(df)
+return_value = clickable_table(key="test", html = html)
+st.markdown("Return value from react %s" % return_value)
 
-# Display the return value from the table click
-if clicked_value is not None:
-    st.write(f"You clicked on cell: {clicked_value}")
 ```
 
 
