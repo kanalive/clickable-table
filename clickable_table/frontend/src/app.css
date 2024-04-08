@@ -11,5 +11,6 @@ table {
   
   td:hover {
     cursor: pointer;
-    background-color: #777676; /* Highlight color on hover */
+    background-color: #fdcdcd; /* Highlight color on hover */
+    opacity: 0.5;
   }
