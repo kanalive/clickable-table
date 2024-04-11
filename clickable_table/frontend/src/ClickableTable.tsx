@@ -6,6 +6,7 @@ import {
 import React, { ReactNode } from "react"
 import "./app.css"
 interface State {
+  key: string
   cellValue: string
   header: string
   rowIndex: number
@@ -16,7 +17,7 @@ interface State {
  * automatically when your component should be re-rendered.
  */
 class ClickableTable extends StreamlitComponentBase<State> {
-  public state = { cellValue: "", header: "", rowIndex: -2 }
+  public state = { key: "", cellValue: "", header: "", rowIndex: -2 }
   private handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
 
     const target = event.target as HTMLElement;
@@ -33,11 +34,11 @@ class ClickableTable extends StreamlitComponentBase<State> {
         if (rowElement && rowElement.tagName === "TR") {
           const tableRow = rowElement as HTMLTableRowElement;
           const rowIndex = tableRow.rowIndex - 1;  // Adjusting for header row
-
+          const key = this.props.args["key"];
           // Use setState to update the state and then use its callback to communicate with Streamlit
-          this.setState({ cellValue, header, rowIndex }, () => {
-            Streamlit.setComponentValue({ cellValue, header, rowIndex });
-            console.log({ cellValue, header, rowIndex });
+          this.setState({ key, cellValue, header, rowIndex }, () => {
+            Streamlit.setComponentValue({key, cellValue, header, rowIndex });
+            console.log(key)
           });
         }
       }

@@ -14,6 +14,6 @@ clickable_table/frontend/build/bootstrap.min.css
 clickable_table/frontend/build/index.html
 clickable_table/frontend/build/static/css/main.c153d121.css
 clickable_table/frontend/build/static/css/main.c153d121.css.map
-clickable_table/frontend/build/static/js/main.464f0054.js
-clickable_table/frontend/build/static/js/main.464f0054.js.LICENSE.txt
-clickable_table/frontend/build/static/js/main.464f0054.js.map
+clickable_table/frontend/build/static/js/main.651aca05.js
+clickable_table/frontend/build/static/js/main.651aca05.js.LICENSE.txt
+clickable_table/frontend/build/static/js/main.651aca05.js.map
