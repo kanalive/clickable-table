@@ -1,16 +1,18 @@
+:root {
+  --border-color: #ccc; /* Default border color */
+}
+
+td, th {
+  border: 1px solid var(--border-color);
+}
+
 table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  th, td {
-    border: 1px solid black;
-    padding: 5px;
-    text-align: left;
-  }
-  
-  td:hover {
-    cursor: pointer;
-    background-color: #fdcdcd; /* Highlight color on hover */
-    opacity: 0.5;
-  }
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td:hover {
+  cursor: pointer;
+  background-color: #fdcdcd; /* Highlight color on hover */
+  opacity: 0.5;
+}

@@ -46,6 +46,8 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
 
   }
+
+
   public render = (): ReactNode => {
 
     const html = this.props.args["html"];
@@ -53,22 +55,21 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const { theme } = this.props
     const style: React.CSSProperties = {}
 
+    console.log(theme)
 
-    if (theme) {
-
+    if (theme && theme.primaryColor) {
+      document.documentElement.style.setProperty('--border-color', theme.textColor);
       const borderStyling = `1px solid`
       style.border = borderStyling
       style.outline = borderStyling
     }
 
-    
     return (
       <div>
         <div 
           dangerouslySetInnerHTML={{ __html: html }} 
-
           onClick={this.handleClick}
-          style={{ cursor: 'pointer' }}  // Change cursor on hover
+          style={{ cursor: 'pointer' }}   // Change cursor on hover
           ></div>
       </div>
     )
