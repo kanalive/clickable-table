@@ -124,13 +124,13 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
 
         if (value < 0) {
-          bar.style.left = `${50 - Math.abs(value*50) }%`;
+          bar.style.left = `${50 - Math.abs(value)/2 }%`;
           bar.style.backgroundColor = '#FF0000'; // Red for negative values
-          bar.style.width = `${Math.abs(value*50) }%`;
+          bar.style.width = `${Math.abs(value)/2 }%`;
         } else {
           bar.style.left = '50%';
           bar.style.backgroundColor = '#0000FF'; // Blue for positive values
-          bar.style.width = `${value*50}%`;
+          bar.style.width = `${value/2}%`;
         }
         bar.style.opacity = '50%';
   
@@ -179,7 +179,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
       document.documentElement.style.setProperty('--header-bg-color', theme.secondaryBackgroundColor);
       document.documentElement.style.setProperty('--hover-color', theme.primaryColor);
-      document.documentElement.style.setProperty('--border-color', adjustColor(theme.secondaryBackgroundColor, -5)); // Darker by 20%
+      document.documentElement.style.setProperty('--border-color', adjustColor(theme.secondaryBackgroundColor, -5)); // Darker by 5%
       const borderStyling = `1px solid`
       style.border = borderStyling
       style.outline = borderStyling
