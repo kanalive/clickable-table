@@ -1,10 +1,19 @@
 :root {
-  --border-color: #ccc; /* Default border color */
+  --header-bg-color: #ffffff; /* Default background color for headers */
+  --border-color: #cccccc;    /* Default border color */
+  --hover-color:red;
 }
 
 td, th {
+  padding: 8px;
+  font-size: 14px;
   border: 1px solid var(--border-color);
 }
+
+th {
+  background-color: var(--header-bg-color);
+}
+
 
 table {
   width: 100%;
@@ -13,6 +22,39 @@ table {
 
 td:hover {
   cursor: pointer;
-  background-color: #fdcdcd; /* Highlight color on hover */
+  /* border: 1px solid var(--hover-color); */
   opacity: 0.5;
+}
+
+.inverse-filter {
+  filter: invert(100%);
+}
+
+.data-bar-container {
+  position: relative;
+  height: 20px; /* Example height */
+}
+
+.data-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: 1;
+}
+
+.data-bar-label {
+  position: relative;
+  z-index: 2;
+  text-align: right;
+  padding-right: 5px; /* Give some space for the label */
+}
+
+.negative {
+  background-color: red;
+  right: 50%;
+}
+
+.positive {
+  background-color: blue;
+  left: 50%;
 }

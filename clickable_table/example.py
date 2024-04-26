@@ -26,8 +26,8 @@ def style_dataframe(df, header_color, index_color):
 
     # Define header and index styles
     styles = [
-        {'selector': 'thead th', 'props': [('background-color', header_color)]},
-        {'selector': 'tbody th', 'props': [('background-color', index_color)]}
+        # {'selector': 'thead th', 'props': [('background-color', header_color)]},
+        # {'selector': 'tbody th', 'props': [('background-color', index_color)]}
     ]
 
     # Initialize Styler object with table styles
@@ -44,7 +44,10 @@ df = df.set_index("Epoch")
 # Suppress the index name to prevent pandas from rendering it as a separate row
 df.index.name = None
 styled_df = style_dataframe(df, "#C5C5C5", "#C5C5C5")
+config = {
+        'data_bar_chart_columns':[{'col_idx': 2, 'min': -1, 'max': 1}], 
+        'idx_col_name':'Tenor Bucket'}
 html = styled_df.render()
 
-return_value = clickable_table(key="test", html = html)
+return_value = clickable_table(key="test", html = html, config=config)
 st.markdown("Return value from react %s" % return_value)
