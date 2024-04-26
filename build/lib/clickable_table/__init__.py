@@ -7,7 +7,7 @@ import pandas as pd
 # the component, and True when we're ready to package and distribute it.
 # (This is, of course, optional - there are innumerable ways to manage your
 # release process.)
-_RELEASE = False
+_RELEASE = True
 # import pandas as pd
 # import streamlit as st
 # Declare a Streamlit component. `declare_component` returns a function
