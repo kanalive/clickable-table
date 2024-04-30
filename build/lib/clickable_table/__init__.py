@@ -36,20 +36,26 @@ if not _RELEASE:
     'C 1': [2087627, -872765, -145564, -337304, 74001, 805085],
     'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
     'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
-    'C 4': [-1.226, 1.553, 1.552, 1.429, 1.352, 1.150],
+    'C 4': ['Below', 20.0, 59.2, 33.2, 90.0, 'Above'],
     'C 5': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028]  
     }
 
     def style_dataframe(df):
         # Function to apply conditional formatting
         def apply_conditional_formatting(val):
-            if val > 1.5:
-                color = "#FFC0CB"  
-            elif val < -1.5:
-                color = "#90EE90"  
-            else:
-                color = ''
-            return f'background-color: {color}'
+            try:
+                val = float(val)
+                if val > 500:
+                    color = "#FFC0CB"  
+                elif val < -500:
+                    color = "#90EE90"  
+                else:
+                    color = ''
+                return f'background-color: {color}'
+            except ValueError:
+                return None
+
+           
 
         # Define header and index styles
         styles = [
@@ -74,9 +80,10 @@ if not _RELEASE:
     html = styled_df.render()
 
     config = {
-        'data_bar_chart_columns':[{'col_idx': 2, 'min': -1, 'max': 1}], 
+        'data_bar_chart_columns':[{'col_idx': 2, 'min': -100, 'max': 100}], 
+        'david_hum_columns':[{'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}], 
         'idx_col_name':'Tenor Bucket',
-        'column_width':['100px','100px','150px','100px','100px','100px']}
+        'column_width':['100px','100px','150px','100px','150px','100px']}
     
     return_value = _component_func(key="test", html = html, config = config)
     st.markdown("Return value from react %s" % return_value)
