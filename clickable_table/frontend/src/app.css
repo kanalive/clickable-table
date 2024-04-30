@@ -5,13 +5,18 @@
 }
 
 td, th {
-  padding: 8px;
   font-size: 14px;
   border: 1px solid var(--border-color);
+  padding: 4px;
+  text-align: center;
 }
 
 th {
   background-color: var(--header-bg-color);
+}
+
+.row_heading{
+  text-align: center;
 }
 
 

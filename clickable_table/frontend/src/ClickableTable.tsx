@@ -36,6 +36,10 @@ function adjustColor(hex: string, percent:number) {
 
   return "#" + rr + gg + bb;
 }
+
+function calculateColumnWidth(numberOfCols: number){
+  return 100/numberOfCols;
+}
 /**
  * This is a React-based component template. The `render()` function is called
  * automatically when your component should be re-rendered.
@@ -70,6 +74,19 @@ class ClickableTable extends StreamlitComponentBase<State> {
     }
 
 
+  }
+
+  private applyColumnWidth = (config:string): void => {
+    if (!this.props.args.config.column_width) return;
+    if (this.props.args.config.column_width.length <= 0 ) return;
+    const tableContainer = document.querySelector('.clickabletable-container');
+    if (!tableContainer ) return;
+      const headers = tableContainer.querySelectorAll('th');
+      if(headers){
+        for (let i = 0; i < headers.length; i++) {
+          headers[i].style.width = this.props.args.config.column_width[i]
+        } 
+      }
   }
 
   private applyStylesToPercentageCells = (config:string): void => {
@@ -127,10 +144,13 @@ class ClickableTable extends StreamlitComponentBase<State> {
           bar.style.left = `${50 - Math.abs(value)/2 }%`;
           bar.style.backgroundColor = '#FF0000'; // Red for negative values
           bar.style.width = `${Math.abs(value)/2 }%`;
+          bar.style.borderRight = "1px solid black"
         } else {
           bar.style.left = '50%';
           bar.style.backgroundColor = '#0000FF'; // Blue for positive values
           bar.style.width = `${value/2}%`;
+          bar.style.borderLeft = "1px solid black"
+
         }
         bar.style.opacity = '50%';
   
@@ -188,6 +208,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
     // After render, apply the styles to the percentage cells
     setTimeout(() => {
       this.applyStylesToPercentageCells(config);
+      this.applyColumnWidth(config);
     }, 0);
 
     return (

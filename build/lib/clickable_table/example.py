@@ -46,7 +46,8 @@ df.index.name = None
 styled_df = style_dataframe(df, "#C5C5C5", "#C5C5C5")
 config = {
         'data_bar_chart_columns':[{'col_idx': 2, 'min': -1, 'max': 1}], 
-        'idx_col_name':'Tenor Bucket'}
+        'idx_col_name':'Tenor Bucket',
+        'column_width':['100px','100px','150px','100px','100px','100px']}
 html = styled_df.render()
 
 return_value = clickable_table(key="test", html = html, config=config)
