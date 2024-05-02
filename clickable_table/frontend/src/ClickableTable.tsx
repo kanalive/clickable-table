@@ -212,17 +212,21 @@ class ClickableTable extends StreamlitComponentBase<State> {
   
         // Add the numeric value as text
         const textContainer = document.createElement('div');
-        // textContainer.style.position = 'relative';
-        // textContainer.style.padding = '0 5px';
-        textContainer.style.float = 'right';
-        textContainer.style.textAlign = 'right';
-        textContainer.style.width = '35%';
         textContainer.style.zIndex = '100';
+        
         if ((Number.isNaN(value)) && cellContent.trim() !== '') {
           textContainer.textContent = cellContent
+          textContainer.style.width = '100%%';
+          textContainer.style.textAlign = 'center';
+
         }
         else{
           textContainer.textContent = `${value}%`;
+          textContainer.style.width = '35%';
+          textContainer.style.textAlign = 'right';
+          textContainer.style.float = 'right';
+
+
         }
 
         cell.appendChild(bar);
