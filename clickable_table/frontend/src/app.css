@@ -2,6 +2,7 @@
   --header-bg-color: #ffffff; /* Default background color for headers */
   --border-color: #cccccc;    /* Default border color */
   --hover-color:red;
+  --max-height: 800px;
 }
 
 td, th {
@@ -19,6 +20,10 @@ th {
   text-align: center;
 }
 
+.clickabletable-container{
+  max-height: var(--max-height);
+  overflow: auto; 
+}
 
 table {
   width: 100%;

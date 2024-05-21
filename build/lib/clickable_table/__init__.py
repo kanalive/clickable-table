@@ -79,13 +79,15 @@ if not _RELEASE:
     styled_df = style_dataframe(df)
     html = styled_df.render()
 
+    max_height = "300px"
+
     config = {
         'data_bar_chart_columns':[{'col_idx': 2, 'min': -100, 'max': 100}], 
         'david_hum_columns':[{'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}], 
         'idx_col_name':'Tenor Bucket',
         'column_width':['100px','100px','150px','100px','150px','100px']}
     
-    return_value = _component_func(key="test", html = html, config = config)
+    return_value = _component_func(key="test", html = html, config = config, max_height = max_height)
     st.markdown("Return value from react %s" % return_value)
 
     st.dataframe(styled_df)
@@ -95,9 +97,9 @@ else:
     build_dir = os.path.join(parent_dir,  "frontend\\build")
     _component_func = components.declare_component("clickable_table", path=build_dir)
 
-def clickable_table(html="", key=None, config = None):
+def clickable_table(html="", key=None, config = None, max_height = None):
     
-    component_value = _component_func(html=html, key=key, config=config, default=0)
+    component_value = _component_func(html=html, key=key, config=config, max_height = max_height, default=0)
 
     
     return component_value

@@ -48,7 +48,8 @@ config = {
         'data_bar_chart_columns':[{'col_idx': 2, 'min': -1, 'max': 1}], 
         'idx_col_name':'Tenor Bucket',
         'column_width':['100px','100px','150px','100px','100px','100px']}
+max_height = "200px"
 html = styled_df.render()
 
-return_value = clickable_table(key="test", html = html, config=config)
+return_value = clickable_table(key="test", html = html, config=config, max_height=max_height)
 st.markdown("Return value from react %s" % return_value)

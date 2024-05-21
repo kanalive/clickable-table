@@ -67,7 +67,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
           // Use setState to update the state and then use its callback to communicate with Streamlit
           this.setState({ key, cellValue, header, rowIndex }, () => {
             Streamlit.setComponentValue({key, cellValue, header, rowIndex });
-            console.log(key)
           });
         }
       }
@@ -106,7 +105,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
   
     
     const theadIndexCol = tableContainer.querySelectorAll('thead tr th');
-    console.log(theadIndexCol)
   
     // Get all rows within the tbody of the table
     const rows = tableContainer.querySelectorAll('tbody tr');
@@ -125,7 +123,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
         const scaleFactorRight = 50 / max;
 
         const cell = row.children[col_idx] as HTMLElement;
-        console.log(row.children)
 
         if (!cell) return;
   
@@ -141,7 +138,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
         
         // Determine the bar's color and position based on the value
         
-        console.log(cell.style)
 
 
         if (value < 0) {
@@ -180,14 +176,12 @@ class ClickableTable extends StreamlitComponentBase<State> {
         const scaleFactor = 65 / max;
 
         const cell = row.children[col_idx] as HTMLElement;
-        console.log(cell.textContent)
 
 
         if (!cell) return;
   
         var cellContent = cell.textContent || '';
         const value = parseFloat(cell.textContent || '0') 
-        console.log(value)
         
         const bar = document.createElement('div');
 
@@ -255,16 +249,19 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
     const html = this.props.args["html"];
     const config = this.props.args["config"];
+    var max_height = this.props.args["max_height"];
+
 
     const { theme } = this.props
     const style: React.CSSProperties = {}
 
-    console.log(theme)
 
     if (theme && theme.primaryColor) {
       // document.documentElement.style.setProperty('--border-color', theme.secondaryBackgroundColor);
 
       document.documentElement.style.setProperty('--header-bg-color', theme.secondaryBackgroundColor);
+      document.documentElement.style.setProperty('--max-height', max_height);
+      console.log(max_height)
       document.documentElement.style.setProperty('--hover-color', theme.primaryColor);
       document.documentElement.style.setProperty('--border-color', adjustColor(theme.secondaryBackgroundColor, -5)); // Darker by 5%
       const borderStyling = `1px solid`
