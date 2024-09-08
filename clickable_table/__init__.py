@@ -28,7 +28,7 @@ if not _RELEASE:
        
         url="http://localhost:3001",
     )
-
+    st.set_page_config(layout="wide")
     st.subheader("Test Clickable Table")
 
     data = {
@@ -37,7 +37,12 @@ if not _RELEASE:
     'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
     'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
     'C 4': ['Below Average', 20.0, 59.2, 33.2, 90.0, 'Above Average'],
-    'C 5': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028]  
+    'Long Term High': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028],  
+    'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
+    'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
+    'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
+    'Current': [1.166, 1.365, 0.997, 1.110, 0.863, 0.709],
+    'Range Chart': ["", "", "", "", "", ""]  
     }
 
     def style_dataframe(df):
@@ -85,8 +90,9 @@ if not _RELEASE:
         'data_bar_chart_columns':[{'col_idx': 2, 'min': -100, 'max': 100}], 
         'david_hum_columns':[{'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}], 
         'idx_col_name':'Tenor Bucket',
-        'column_width':['100px','100px','150px','100px','150px','100px']}
-    
+        'column_width':['100px','100px','150px','100px','150px','100px','100px','100px','100px','100px'],
+        'range_chart':[{'col_idx':10, 'long_term_high_idx':5,'long_term_low_idx':6,'short_term_high_idx':7,'short_term_low_idx':8,'current_idx':9}]
+    }
     return_value = _component_func(key="test", html = html, config = config, max_height = max_height)
     st.markdown("Return value from react %s" % return_value)
 

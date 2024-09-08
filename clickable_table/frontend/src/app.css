@@ -68,3 +68,19 @@ td:hover {
   background-color: blue;
   left: 50%;
 }
+
+.range-line {
+  position: relative;
+  height: 1px;            /* This is the line height */
+  background-color: #000; /* Black line for the range */
+  width: 100%;
+  
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  opacity: 50%;
+}

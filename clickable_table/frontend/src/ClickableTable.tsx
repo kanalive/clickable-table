@@ -46,6 +46,12 @@ function calculateColumnWidth(numberOfCols: number){
  */
 class ClickableTable extends StreamlitComponentBase<State> {
   public state = { key: "", cellValue: "", header: "", rowIndex: -2 }
+  // Helper function to calculate the position of dots in percentage
+  private getLeftPosition = (value: number, min: number, max: number): number => {
+    // console.log([value, min, max])
+    return ((value - min) / (max - min)) * 98;
+  }
+  
   
   private handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
 
@@ -97,6 +103,8 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const dataBarChartColumns = this.props.args.config.data_bar_chart_columns;
     const davidHumColumns = this.props.args.config.david_hum_columns;
     const idxColName = this.props.args.config.idx_col_name;
+    const rangeChartColumns = this.props.args.config.range_chart;
+
 
     const headers = tableContainer.querySelectorAll('th');
     if(headers){
@@ -111,13 +119,9 @@ class ClickableTable extends StreamlitComponentBase<State> {
     // console.log(rows)
 
     rows.forEach(row => {
-      // console.log(row)
       // Apply styles to the cells of the identified percentage columns
       dataBarChartColumns.forEach((columnConfig: { col_idx: any; min: any; max: any }) => {
         const { col_idx, min, max } = columnConfig;
-        // console.log(columnConfig)
-        // console.log(col_idx)
-        // console.log(min)
 
         const scaleFactorLeft = 50 / Math.abs(min);
         const scaleFactorRight = 50 / max;
@@ -229,22 +233,67 @@ class ClickableTable extends StreamlitComponentBase<State> {
         // Append the text container
       });
 
+      rangeChartColumns.forEach((rangeConfig: any) => {
+        const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx } = rangeConfig;
+        // Extract the data for this row from the specified column indices
+        const longTermHigh = parseFloat(row.children[long_term_high_idx].textContent || '0');
+        const longTermLow = parseFloat(row.children[long_term_low_idx].textContent || '0');
+        const shortTermHigh = parseFloat(row.children[short_term_high_idx].textContent || '0');
+        const shortTermLow = parseFloat(row.children[short_term_low_idx].textContent || '0');
+        const current = parseFloat(row.children[current_idx].textContent || '0');
+        console.log([longTermHigh, longTermLow, shortTermHigh, shortTermLow, current])
+
+
+        const rangeCell = row.children[col_idx] as HTMLElement;
+
+        if (!rangeCell) return;
+
+        // Create the 5-dot range chart
+        const rangeChart = document.createElement('div');
+        rangeChart.style.position = 'relative';
+        // rangeChart.style.height = '20px';
+        rangeChart.style.width = '100%';
+        rangeChart.style.display = 'flex';
+        rangeChart.style.justifyContent = 'space-between';
+
+        rangeChart.classList.add('range-line'); // Add the line class for 1px line
+
+        // Helper function to create dots
+        const createDot = (position: number, color: string): HTMLElement => {
+          const dot = document.createElement('div');
+          dot.style.position = 'absolute';
+          dot.style.left = `${position}%`;
+          dot.style.marginTop = '-5px';
+          dot.style.width = '10px';
+          dot.style.height = '10px';
+          dot.style.backgroundColor = color;
+          dot.style.borderRadius = '50%';
+          return dot;
+        };
+
+        // Calculate positions (as percentages) for each dot
+        const longTermLowPos = this.getLeftPosition(longTermLow, longTermLow, longTermHigh);
+        const shortTermLowPos = this.getLeftPosition(shortTermLow, longTermLow, longTermHigh);
+        const currentPos = this.getLeftPosition(current, longTermLow, longTermHigh);
+        const shortTermHighPos = this.getLeftPosition(shortTermHigh, longTermLow, longTermHigh);
+        const longTermHighPos = this.getLeftPosition(longTermHigh, longTermLow, longTermHigh);
+
+        // Append dots to the chart
+        rangeChart.appendChild(createDot(longTermLowPos, '#ff4500')); // Long Term Low (orange)
+        rangeChart.appendChild(createDot(shortTermLowPos, '#ffa500')); // Short Term Low (light orange)
+        rangeChart.appendChild(createDot(shortTermHighPos, '#ffa500')); // Short Term High (light orange)
+        rangeChart.appendChild(createDot(longTermHighPos, '#ff4500')); // Long Term High (orange)
+        rangeChart.appendChild(createDot(currentPos, '#32cd32')); // Current (green)
+
+        // Clear the existing cell content and append the range chart
+        rangeCell.textContent = '';
+        rangeCell.appendChild(rangeChart);
+      });
+
 
     });
   };
-  
-  
 
-  // public componentDidMount() {
-  //   // Since componentDidMount only runs once, use it to apply styles after initial render
-  //   this.applyStylesToPercentageCells();
-  // }
-  
-  // public componentDidUpdate() {
-  //   // Use componentDidUpdate to reapply styles when the component updates
-  //   this.applyStylesToPercentageCells();
-  // }
-  
   public render = (): ReactNode => {
 
     const html = this.props.args["html"];
@@ -261,7 +310,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
       document.documentElement.style.setProperty('--header-bg-color', theme.secondaryBackgroundColor);
       document.documentElement.style.setProperty('--max-height', max_height);
-      console.log(max_height)
       document.documentElement.style.setProperty('--hover-color', theme.primaryColor);
       document.documentElement.style.setProperty('--border-color', adjustColor(theme.secondaryBackgroundColor, -5)); // Darker by 5%
       const borderStyling = `1px solid`
@@ -285,13 +333,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
       </div>
     )
   }
-
-  
 }
 
-// "withStreamlitConnection" is a wrapper function. It bootstraps the
-// connection between your component and the Streamlit app, and handles
-// passing arguments from Python -> Component.
-//
-// You don't need to edit withStreamlitConnection (but you're welcome to!).
 export default withStreamlitConnection(ClickableTable)

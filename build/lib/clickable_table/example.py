@@ -5,13 +5,18 @@ import pandas as pd
 st.subheader("Test Clickable Table")
 
 data = {
-'Epoch': ["R 1", "R 2", "R 3", "R 4", "R 5", "R 6", "R 7", "R 8"],
-'C 1': [0.081, -1.164, -1.635, -1.515, -1.460, -1.306, -1.136, -1.222],
-'C 2': [-0.505, 1.461, 1.596, 1.510, 1.406, 1.241, 1.198, 0.932],
-'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261, -1.037, -0.851],
-'C 4': [-1.226, 1.553, 1.552, 1.429, 1.352, 1.150, 0.966, 0.782],
-'C 5': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028, 0.899, None]  
-}
+    'Epoch': ["R 1", "R 2", "R 3", "R 4", "R 5", "Total"],
+    'C 1': [2087627, -872765, -145564, -337304, 74001, 805085],
+    'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
+    'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
+    'C 4': ['Below Average', 20.0, 59.2, 33.2, 90.0, 'Above Average'],
+    'Long Term High': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028],  
+    'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
+    'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
+    'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
+    'Current': [1.166, 1.365, 0.997, 1.110, 0.863, 0.709],
+    'Range Chart': ["", "", "", "", "", ""]  
+    }
 
 def style_dataframe(df, header_color, index_color):
     # Function to apply conditional formatting
@@ -45,10 +50,14 @@ df = df.set_index("Epoch")
 df.index.name = None
 styled_df = style_dataframe(df, "#C5C5C5", "#C5C5C5")
 config = {
-        'data_bar_chart_columns':[{'col_idx': 2, 'min': -1, 'max': 1}], 
+        'data_bar_chart_columns':[{'col_idx': 2, 'min': -100, 'max': 100}], 
+        'david_hum_columns':[{'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}], 
         'idx_col_name':'Tenor Bucket',
-        'column_width':['100px','100px','150px','100px','100px','100px']}
+        'column_width':['100px','100px','150px','100px','150px','100px','100px','100px','100px','100px'],
+        'range_chart':[{'col_idx':10, 'long_term_high_idx':5,'long_term_low_idx':6,'short_term_high_idx':7,'short_term_low_idx':8,'current_idx':9}]
+    }
+max_height = "300px"
 html = styled_df.render()
 
-return_value = clickable_table(key="test", html = html, config=config)
+return_value = clickable_table(key="test", html = html, config=config, max_height=max_height)
 st.markdown("Return value from react %s" % return_value)
