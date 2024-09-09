@@ -234,7 +234,8 @@ class ClickableTable extends StreamlitComponentBase<State> {
       });
 
       rangeChartColumns.forEach((rangeConfig: any) => {
-        const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx } = rangeConfig;
+        const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color } = rangeConfig;
+
         // Extract the data for this row from the specified column indices
         const longTermHigh = parseFloat(row.children[long_term_high_idx].textContent || '0');
         const longTermLow = parseFloat(row.children[long_term_low_idx].textContent || '0');
@@ -268,6 +269,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
           dot.style.height = '10px';
           dot.style.backgroundColor = color;
           dot.style.borderRadius = '50%';
+          dot.style.opacity = '70%'
           return dot;
         };
 
@@ -279,11 +281,11 @@ class ClickableTable extends StreamlitComponentBase<State> {
         const longTermHighPos = this.getLeftPosition(longTermHigh, longTermLow, longTermHigh);
 
         // Append dots to the chart
-        rangeChart.appendChild(createDot(longTermLowPos, '#ff4500')); // Long Term Low (orange)
-        rangeChart.appendChild(createDot(shortTermLowPos, '#ffa500')); // Short Term Low (light orange)
-        rangeChart.appendChild(createDot(shortTermHighPos, '#ffa500')); // Short Term High (light orange)
-        rangeChart.appendChild(createDot(longTermHighPos, '#ff4500')); // Long Term High (orange)
-        rangeChart.appendChild(createDot(currentPos, '#32cd32')); // Current (green)
+        rangeChart.appendChild(createDot(longTermLowPos, long_term_color)); // Long Term Low (orange)
+        rangeChart.appendChild(createDot(shortTermLowPos, short_term_color)); // Short Term Low (light orange)
+        rangeChart.appendChild(createDot(shortTermHighPos, short_term_color)); // Short Term High (light orange)
+        rangeChart.appendChild(createDot(longTermHighPos, long_term_color)); // Long Term High (orange)
+        rangeChart.appendChild(createDot(currentPos, current_color)); // Current (green)
 
         // Clear the existing cell content and append the range chart
         rangeCell.textContent = '';
