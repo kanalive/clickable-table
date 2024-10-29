@@ -120,178 +120,181 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
     rows.forEach(row => {
       // Apply styles to the cells of the identified percentage columns
-      dataBarChartColumns.forEach((columnConfig: { col_idx: any; min: any; max: any }) => {
-        const { col_idx, min, max } = columnConfig;
+      if (Array.isArray(dataBarChartColumns)) {
+        dataBarChartColumns.forEach((columnConfig: { col_idx: any; min: any; max: any }) => {
+          const { col_idx, min, max } = columnConfig;
 
-        const scaleFactorLeft = 50 / Math.abs(min);
-        const scaleFactorRight = 50 / max;
+          const scaleFactorLeft = 50 / Math.abs(min);
+          const scaleFactorRight = 50 / max;
 
-        const cell = row.children[col_idx] as HTMLElement;
+          const cell = row.children[col_idx] as HTMLElement;
 
-        if (!cell) return;
-  
-        // Assume cell content is a numeric value
-        const value = parseFloat(cell.textContent || '0') 
-  
-        // Create the bar element
-        const bar = document.createElement('div');
-        bar.style.position = 'relative';
-        bar.style.height = '20px';
-        bar.style.top = '0';
-        bar.style.float = 'left';
-        
-        // Determine the bar's color and position based on the value
-        
-
-
-        if (value < 0) {
-          bar.style.left = `${50 - Math.abs(value) * scaleFactorLeft }%`;
-          bar.style.backgroundColor = '#FF0000'; // Red for negative values
-          bar.style.width = `${Math.abs(value) * scaleFactorLeft }%`;
-          bar.style.borderRight = "1px solid black"
-        } else {
-          bar.style.left = '50%';
-          bar.style.backgroundColor = '#0000FF'; // Blue for positive values
-          bar.style.width = `${value*scaleFactorRight}%`;
-          bar.style.borderLeft = "1px solid black"
-
-        }
-        bar.style.opacity = '50%';
-  
-        // Clear the cell's content and append the bar
-        cell.textContent = '';
-        cell.appendChild(bar);
-  
-        // Add the numeric value as text
-        const textContainer = document.createElement('div');
-        textContainer.style.position = 'relative';
-        textContainer.style.padding = '0 5px';
-        textContainer.style.float = 'right';
-        textContainer.style.zIndex = '100';
-        textContainer.textContent = `${(value )}%`;
-  
-        // Append the text container
-        cell.appendChild(textContainer);
-      });
-
-      davidHumColumns.forEach((columnConfig: { col_idx: any; min: any; max: any; exception_col_color:any }) => {
-        const { col_idx, min, max, exception_col_color } = columnConfig;
-
-        const scaleFactor = 65 / max;
-
-        const cell = row.children[col_idx] as HTMLElement;
-
-
-        if (!cell) return;
-  
-        var cellContent = cell.textContent || '';
-        const value = parseFloat(cell.textContent || '0') 
-        
-        const bar = document.createElement('div');
-
-
-        if ((Number.isNaN(value)) && cellContent.trim() !== '') {
-          // It's a non-numeric string, apply yellow background
-          cell.style.backgroundColor = exception_col_color;
-        } else {
+          if (!cell) return;
+    
+          // Assume cell content is a numeric value
+          const value = parseFloat(cell.textContent || '0') 
+    
           // Create the bar element
+          const bar = document.createElement('div');
+          bar.style.position = 'relative';
           bar.style.height = '20px';
+          bar.style.top = '0';
           bar.style.float = 'left';
-          bar.style.backgroundColor = '#0000FF'; 
-          bar.style.width = `${value*scaleFactor}%`;
-          bar.style.opacity = '50%';
           
-        }
-        
-        
-  
-        // Clear the cell's content and append the bar
-        cell.textContent = '';
-  
-        // Add the numeric value as text
-        const textContainer = document.createElement('div');
-        textContainer.style.zIndex = '100';
-        
-        if ((Number.isNaN(value)) && cellContent.trim() !== '') {
-          textContainer.textContent = cellContent
-          textContainer.style.width = '100%%';
-          textContainer.style.textAlign = 'center';
+          // Determine the bar's color and position based on the value
+          
 
-        }
-        else{
-          textContainer.textContent = `${value}%`;
-          textContainer.style.width = '35%';
-          textContainer.style.textAlign = 'right';
+
+          if (value < 0) {
+            bar.style.left = `${50 - Math.abs(value) * scaleFactorLeft }%`;
+            bar.style.backgroundColor = '#FF0000'; // Red for negative values
+            bar.style.width = `${Math.abs(value) * scaleFactorLeft }%`;
+            bar.style.borderRight = "1px solid black"
+          } else {
+            bar.style.left = '50%';
+            bar.style.backgroundColor = '#0000FF'; // Blue for positive values
+            bar.style.width = `${value*scaleFactorRight}%`;
+            bar.style.borderLeft = "1px solid black"
+
+          }
+          bar.style.opacity = '50%';
+    
+          // Clear the cell's content and append the bar
+          cell.textContent = '';
+          cell.appendChild(bar);
+    
+          // Add the numeric value as text
+          const textContainer = document.createElement('div');
+          textContainer.style.position = 'relative';
+          textContainer.style.padding = '0 5px';
           textContainer.style.float = 'right';
+          textContainer.style.zIndex = '100';
+          textContainer.textContent = `${(value )}%`;
+    
+          // Append the text container
+          cell.appendChild(textContainer);
+        });
+      }
+      if (Array.isArray(davidHumColumns)) {
+        davidHumColumns.forEach((columnConfig: { col_idx: any; min: any; max: any; exception_col_color:any }) => {
+          const { col_idx, min, max, exception_col_color } = columnConfig;
+
+          const scaleFactor = 65 / max;
+
+          const cell = row.children[col_idx] as HTMLElement;
 
 
-        }
-
-        cell.appendChild(bar);
-        cell.appendChild(textContainer);
-
-        // Append the text container
-      });
-
-      rangeChartColumns.forEach((rangeConfig: any) => {
-        const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color } = rangeConfig;
-
-        // Extract the data for this row from the specified column indices
-        const longTermHigh = parseFloat(row.children[long_term_high_idx].textContent || '0');
-        const longTermLow = parseFloat(row.children[long_term_low_idx].textContent || '0');
-        const shortTermHigh = parseFloat(row.children[short_term_high_idx].textContent || '0');
-        const shortTermLow = parseFloat(row.children[short_term_low_idx].textContent || '0');
-        const current = parseFloat(row.children[current_idx].textContent || '0');
-        console.log([longTermHigh, longTermLow, shortTermHigh, shortTermLow, current])
+          if (!cell) return;
+    
+          var cellContent = cell.textContent || '';
+          const value = parseFloat(cell.textContent || '0') 
+          
+          const bar = document.createElement('div');
 
 
-        const rangeCell = row.children[col_idx] as HTMLElement;
+          if ((Number.isNaN(value)) && cellContent.trim() !== '') {
+            // It's a non-numeric string, apply yellow background
+            cell.style.backgroundColor = exception_col_color;
+          } else {
+            // Create the bar element
+            bar.style.height = '20px';
+            bar.style.float = 'left';
+            bar.style.backgroundColor = '#0000FF'; 
+            bar.style.width = `${value*scaleFactor}%`;
+            bar.style.opacity = '50%';
+            
+          }
+          
+          
+    
+          // Clear the cell's content and append the bar
+          cell.textContent = '';
+    
+          // Add the numeric value as text
+          const textContainer = document.createElement('div');
+          textContainer.style.zIndex = '100';
+          
+          if ((Number.isNaN(value)) && cellContent.trim() !== '') {
+            textContainer.textContent = cellContent
+            textContainer.style.width = '100%%';
+            textContainer.style.textAlign = 'center';
 
-        if (!rangeCell) return;
+          }
+          else{
+            textContainer.textContent = `${value}%`;
+            textContainer.style.width = '35%';
+            textContainer.style.textAlign = 'right';
+            textContainer.style.float = 'right';
 
-        // Create the 5-dot range chart
-        const rangeChart = document.createElement('div');
-        rangeChart.style.position = 'relative';
-        // rangeChart.style.height = '20px';
-        rangeChart.style.width = '100%';
-        rangeChart.style.display = 'flex';
-        rangeChart.style.justifyContent = 'space-between';
 
-        rangeChart.classList.add('range-line'); // Add the line class for 1px line
+          }
 
-        // Helper function to create dots
-        const createDot = (position: number, color: string): HTMLElement => {
-          const dot = document.createElement('div');
-          dot.style.position = 'absolute';
-          dot.style.left = `${position}%`;
-          dot.style.marginTop = '-5px';
-          dot.style.width = '10px';
-          dot.style.height = '10px';
-          dot.style.backgroundColor = color;
-          dot.style.borderRadius = '50%';
-          dot.style.opacity = '70%'
-          return dot;
-        };
+          cell.appendChild(bar);
+          cell.appendChild(textContainer);
 
-        // Calculate positions (as percentages) for each dot
-        const longTermLowPos = this.getLeftPosition(longTermLow, longTermLow, longTermHigh);
-        const shortTermLowPos = this.getLeftPosition(shortTermLow, longTermLow, longTermHigh);
-        const currentPos = this.getLeftPosition(current, longTermLow, longTermHigh);
-        const shortTermHighPos = this.getLeftPosition(shortTermHigh, longTermLow, longTermHigh);
-        const longTermHighPos = this.getLeftPosition(longTermHigh, longTermLow, longTermHigh);
+          // Append the text container
+        });
+      }
+      if (Array.isArray(rangeChartColumns)) {
+        rangeChartColumns.forEach((rangeConfig: any) => {
+          const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color } = rangeConfig;
 
-        // Append dots to the chart
-        rangeChart.appendChild(createDot(longTermLowPos, long_term_color)); // Long Term Low (orange)
-        rangeChart.appendChild(createDot(shortTermLowPos, short_term_color)); // Short Term Low (light orange)
-        rangeChart.appendChild(createDot(shortTermHighPos, short_term_color)); // Short Term High (light orange)
-        rangeChart.appendChild(createDot(longTermHighPos, long_term_color)); // Long Term High (orange)
-        rangeChart.appendChild(createDot(currentPos, current_color)); // Current (green)
+          // Extract the data for this row from the specified column indices
+          const longTermHigh = parseFloat(row.children[long_term_high_idx].textContent || '0');
+          const longTermLow = parseFloat(row.children[long_term_low_idx].textContent || '0');
+          const shortTermHigh = parseFloat(row.children[short_term_high_idx].textContent || '0');
+          const shortTermLow = parseFloat(row.children[short_term_low_idx].textContent || '0');
+          const current = parseFloat(row.children[current_idx].textContent || '0');
+          console.log([longTermHigh, longTermLow, shortTermHigh, shortTermLow, current])
 
-        // Clear the existing cell content and append the range chart
-        rangeCell.textContent = '';
-        rangeCell.appendChild(rangeChart);
-      });
 
+          const rangeCell = row.children[col_idx] as HTMLElement;
+
+          if (!rangeCell) return;
+
+          // Create the 5-dot range chart
+          const rangeChart = document.createElement('div');
+          rangeChart.style.position = 'relative';
+          // rangeChart.style.height = '20px';
+          rangeChart.style.width = '100%';
+          rangeChart.style.display = 'flex';
+          rangeChart.style.justifyContent = 'space-between';
+
+          rangeChart.classList.add('range-line'); // Add the line class for 1px line
+
+          // Helper function to create dots
+          const createDot = (position: number, color: string): HTMLElement => {
+            const dot = document.createElement('div');
+            dot.style.position = 'absolute';
+            dot.style.left = `${position}%`;
+            dot.style.marginTop = '-5px';
+            dot.style.width = '10px';
+            dot.style.height = '10px';
+            dot.style.backgroundColor = color;
+            dot.style.borderRadius = '50%';
+            dot.style.opacity = '70%'
+            return dot;
+          };
+
+          // Calculate positions (as percentages) for each dot
+          const longTermLowPos = this.getLeftPosition(longTermLow, longTermLow, longTermHigh);
+          const shortTermLowPos = this.getLeftPosition(shortTermLow, longTermLow, longTermHigh);
+          const currentPos = this.getLeftPosition(current, longTermLow, longTermHigh);
+          const shortTermHighPos = this.getLeftPosition(shortTermHigh, longTermLow, longTermHigh);
+          const longTermHighPos = this.getLeftPosition(longTermHigh, longTermLow, longTermHigh);
+
+          // Append dots to the chart
+          rangeChart.appendChild(createDot(longTermLowPos, long_term_color)); // Long Term Low (orange)
+          rangeChart.appendChild(createDot(shortTermLowPos, short_term_color)); // Short Term Low (light orange)
+          rangeChart.appendChild(createDot(shortTermHighPos, short_term_color)); // Short Term High (light orange)
+          rangeChart.appendChild(createDot(longTermHighPos, long_term_color)); // Long Term High (orange)
+          rangeChart.appendChild(createDot(currentPos, current_color)); // Current (green)
+
+          // Clear the existing cell content and append the range chart
+          rangeCell.textContent = '';
+          rangeCell.appendChild(rangeChart);
+        });
+      }
 
     });
   };
