@@ -73,6 +73,8 @@ if not _RELEASE:
 
         styler = styler.applymap(apply_conditional_formatting)
 
+        
+
         return styler
 
 
@@ -80,7 +82,11 @@ if not _RELEASE:
     df = pd.DataFrame(data)
     df = df.set_index("Epoch")
     # Suppress the index name to prevent pandas from rendering it as a separate row
+    # df['C 2'] = pd.Series(["{0:.1f}%".format(val) for val in df['C 2']], index = df.index)
+
+    st.dataframe(df)
     df.index.name = None
+
     styled_df = style_dataframe(df)
     html = styled_df.render()
 

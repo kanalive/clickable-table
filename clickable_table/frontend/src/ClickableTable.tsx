@@ -133,6 +133,17 @@ class ClickableTable extends StreamlitComponentBase<State> {
     
           // Assume cell content is a numeric value
           const value = parseFloat(cell.textContent || '0') 
+          const cellContent = cell.textContent || '';
+
+          let numericValue;
+
+          if (cellContent.includes('%')) {
+              // Remove the '%' symbol and parse as float
+              numericValue = parseFloat(cellContent.replace('%', '')) ;
+          } else {
+              // Parse directly as a float if it's a numeric value
+              numericValue = parseFloat(cellContent);
+          }
     
           // Create the bar element
           const bar = document.createElement('div');
@@ -145,19 +156,18 @@ class ClickableTable extends StreamlitComponentBase<State> {
           
 
 
-          if (value < 0) {
-            bar.style.left = `${50 - Math.abs(value) * scaleFactorLeft }%`;
+          if (numericValue < 0) {
+            bar.style.left = `${50 - Math.abs(numericValue) * scaleFactorLeft}%`;
             bar.style.backgroundColor = '#FF0000'; // Red for negative values
-            bar.style.width = `${Math.abs(value) * scaleFactorLeft }%`;
-            bar.style.borderRight = "1px solid black"
-          } else {
+            bar.style.width = `${Math.abs(numericValue) * scaleFactorLeft}%`;
+            bar.style.borderRight = "1px solid black";
+        } else {
             bar.style.left = '50%';
             bar.style.backgroundColor = '#0000FF'; // Blue for positive values
-            bar.style.width = `${value*scaleFactorRight}%`;
-            bar.style.borderLeft = "1px solid black"
-
-          }
-          bar.style.opacity = '50%';
+            bar.style.width = `${numericValue * scaleFactorRight}%`;
+            bar.style.borderLeft = "1px solid black";
+        }
+        bar.style.opacity = '50%';
     
           // Clear the cell's content and append the bar
           cell.textContent = '';
@@ -169,7 +179,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
           textContainer.style.padding = '0 5px';
           textContainer.style.float = 'right';
           textContainer.style.zIndex = '100';
-          textContainer.textContent = `${(value )}%`;
+          textContainer.textContent = cellContent.trim(); 
     
           // Append the text container
           cell.appendChild(textContainer);

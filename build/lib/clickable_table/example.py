@@ -56,7 +56,7 @@ config = {
         'david_hum_columns':[{'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}], 
         'idx_col_name':'Tenor Bucket',
         'column_width':['100px','100px','150px','100px','150px','100px','100px','100px','100px','100px'],
-        'range_chart':[{'col_idx':10, 'long_term_high_idx':5,'long_term_low_idx':6,'short_term_high_idx':7,'short_term_low_idx':8,'current_idx':9, 'long_term_color':'blue', 'short_term_color':'green', 'current_color':'black'}]
+        # 'range_chart':[{'col_idx':10, 'long_term_high_idx':5,'long_term_low_idx':6,'short_term_high_idx':7,'short_term_low_idx':8,'current_idx':9, 'long_term_color':'blue', 'short_term_color':'green', 'current_color':'black'}]
     }
 max_height = "300px"
 html = styled_df.render()
