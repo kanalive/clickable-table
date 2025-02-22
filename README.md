@@ -13,7 +13,7 @@ The Clickable Table component for Streamlit bridges the gap between static table
 The Clickable Table component takes full advantage of pandas' powerful `Styler` object. Begin by styling your pandas DataFrame to your heart's content, using the myriad styling options available to you. Once you've crafted the visual representation of your data with colors, conditional formats, and more, the Clickable Table component seamlessly renders your `Styler` object as interactive HTML. With clickable functionality layered on top, each cell in your table becomes an interactive element, allowing users to engage with the data more intuitively.
 
 ## Screenshot
-![Clickable Table Demo](Screenshot.png)
+![Clickable Table Demo](images/Screenshot.png)
 
 ## Features
 
@@ -142,6 +142,8 @@ data_bar_columns = [
     {'col_idx': 3, 'min': -2, 'max': 2}               # Column 3
 ]
 ```
+![Data Bar Charts](images/data_bar_chart.png)
+
 
 ### David Hum Columns
 Special columns display percentage bars for numeric values while highlighting text values with custom background colors:
@@ -152,6 +154,7 @@ david_hum_columns = [
     {'col_idx': 5, 'min': 0, 'max': 100, 'exception_col_color': "lightblue"}
 ]
 ```
+![David Hum Columns](images/david_hum_column_chart.png)
 
 ### Range Charts
 Visualize ranges with dots representing different values:
@@ -170,6 +173,7 @@ range_chart = [
     }
 ]
 ```
+![Range Charts](images/range_chart.png)
 
 ### Hiding Calculation Columns
 Some visualizations (like range charts) need data columns that you might not want to display. You can hide these columns while still using their values for calculations:
