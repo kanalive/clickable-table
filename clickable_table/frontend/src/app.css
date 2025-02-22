@@ -84,3 +84,7 @@ td:hover {
   position: absolute;
   opacity: 50%;
 }
+
+.hide-column {
+  display: none;
+}

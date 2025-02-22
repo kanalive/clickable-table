@@ -6,6 +6,7 @@ import {
 import React, { ReactNode } from "react"
 import "./app.css"
 import internal from "stream"
+
 interface State {
   key: string
   cellValue: string
@@ -77,11 +78,9 @@ class ClickableTable extends StreamlitComponentBase<State> {
         }
       }
     }
-
-
   }
 
-  private applyColumnWidth = (config:string): void => {
+  private applyColumnWidth = (config: any): void => {
     if (!this.props.args.config.column_width) return;
     if (this.props.args.config.column_width.length <= 0 ) return;
     const tableContainer = document.querySelector('.clickabletable-container');
@@ -89,12 +88,42 @@ class ClickableTable extends StreamlitComponentBase<State> {
       const headers = tableContainer.querySelectorAll('th');
       if(headers){
         for (let i = 0; i < headers.length; i++) {
-          headers[i].style.width = this.props.args.config.column_width[i]
+          headers[i].style.width = this.props.args.config.column_width[i];
         } 
       }
   }
 
-  private applyStylesToPercentageCells = (config:string): void => {
+  private applyHiddenColumnClasses = (config: any): void => {
+    // If no hidden columns or class name defined, exit early
+    if (!this.props.args.config.hidden_columns || !this.props.args.config.hidden_column_class) return;
+    if (this.props.args.config.hidden_columns.length <= 0) return;
+    
+    const tableContainer = document.querySelector('.clickabletable-container');
+    if (!tableContainer) return;
+    
+    const table = tableContainer.querySelector('table');
+    if (!table) return;
+    
+    // Get all rows in the table
+    const allRows = table.querySelectorAll('tr');
+    
+    allRows.forEach(row => {
+      // For each hidden column index, add the class to the cell
+      this.props.args.config.hidden_columns.forEach((colIdx: number) => {
+        // Add 1 to colIdx because CSS nth-child is 1-based
+        const cssColIdx = colIdx + 1;
+        
+        // Find the cell in this row at the specified index
+        const cell = row.querySelector(`th:nth-child(${cssColIdx}), td:nth-child(${cssColIdx})`);
+        
+        if (cell) {
+          cell.classList.add(this.props.args.config.hidden_column_class);
+        }
+      });
+    });
+  }
+
+  private applyStylesToPercentageCells = (config: any): void => {
 
     // First, get the headers
     const tableContainer = document.querySelector('.clickabletable-container');
@@ -105,12 +134,10 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const idxColName = this.props.args.config.idx_col_name;
     const rangeChartColumns = this.props.args.config.range_chart;
 
-
     const headers = tableContainer.querySelectorAll('th');
     if(headers){
-      headers[0].textContent = idxColName
+      headers[0].textContent = idxColName;
     }
-  
     
     const theadIndexCol = tableContainer.querySelectorAll('thead tr th');
   
@@ -154,8 +181,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
           
           // Determine the bar's color and position based on the value
           
-
-
           if (numericValue < 0) {
             bar.style.left = `${50 - Math.abs(numericValue) * scaleFactorLeft}%`;
             bar.style.backgroundColor = '#FF0000'; // Red for negative values
@@ -255,7 +280,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
           const shortTermHigh = parseFloat(row.children[short_term_high_idx].textContent || '0');
           const shortTermLow = parseFloat(row.children[short_term_low_idx].textContent || '0');
           const current = parseFloat(row.children[current_idx].textContent || '0');
-          console.log([longTermHigh, longTermLow, shortTermHigh, shortTermLow, current])
+          // console.log([longTermHigh, longTermLow, shortTermHigh, shortTermLow, current])
 
 
           const rangeCell = row.children[col_idx] as HTMLElement;
@@ -336,6 +361,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
     setTimeout(() => {
       this.applyStylesToPercentageCells(config);
       this.applyColumnWidth(config);
+      this.applyHiddenColumnClasses(config); // Apply hidden column classes
     }, 0);
 
     return (

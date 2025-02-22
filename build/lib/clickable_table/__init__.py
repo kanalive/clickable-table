@@ -20,7 +20,8 @@ else:
     _component_func = components.declare_component("clickable_table", path=build_dir)
 
 def clickable_table(df=None, styling_function=None, data_bar_columns=None, david_hum_columns=None, 
-                   range_chart=None, idx_col_name=None, column_width=None, max_height="800px", key=None):
+                   range_chart=None, idx_col_name=None, column_width=None, max_height="800px", 
+                   hidden_column_class="hide-column", hidden_columns=None, key=None):
     """
     Create a clickable table component with advanced visualization options.
     
@@ -45,6 +46,12 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
         List of column width values (e.g. ['100px', '150px', ...])
     max_height : str, optional
         Maximum height of the table container (e.g. '800px')
+    hidden_column_class : str, optional
+        CSS class name to add to columns that should be hidden via CSS
+        Default is "hide-column" which is defined in app.css
+    hidden_columns : list of int, optional
+        List of column indices to add the hidden class to (e.g. [5, 6, 7])
+        Note: These columns will be hidden using CSS display:none
     key : str, optional
         Key for the component instance
         
@@ -72,7 +79,9 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
         'david_hum_columns': david_hum_columns or [],
         'idx_col_name': idx_col_name or df.index.name or "",
         'column_width': column_width or [],
-        'range_chart': range_chart or []
+        'range_chart': range_chart or [],
+        'hidden_column_class': hidden_column_class,
+        'hidden_columns': hidden_columns or []
     }
     
     # Call the component function
@@ -97,7 +106,7 @@ if not _RELEASE:
         'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
         'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
         'C 4': ['Below Average', 20.0, 59.2, 33.2, 90.0, 'Above Average'],
-        'C 5': [45.0, 'Good', 62.5, 28.7, 75.2, 'Excellent'],  # For second David Hum column
+        'C 5': [45.0, 'Good', 62.5, 28.7, 75.2, 'Excellent'],
         'Long Term High': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028],  
         'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
         'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
@@ -161,6 +170,12 @@ if not _RELEASE:
         '100px', '100px', '100px', '100px', '100px', '150px'
     ]
     
+    # Columns to be hidden
+    hidden_columns = [6, 7, 8, 9]  # Long/Short Term High/Low columns
+    
+    # The CSS for hiding columns is defined in app.css (.hide-column { display: none !important; })
+    # No need to add additional CSS in Streamlit
+    
     return_value = clickable_table(
         df=df,
         styling_function=style_dataframe,
@@ -169,6 +184,8 @@ if not _RELEASE:
         range_chart=range_chart,
         idx_col_name='Tenor Bucket',
         column_width=column_width,
+        hidden_column_class="hide-column",
+        hidden_columns=hidden_columns,
         max_height="300px",
         key="test"
     )

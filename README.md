@@ -13,7 +13,7 @@ The Clickable Table component for Streamlit bridges the gap between static table
 The Clickable Table component takes full advantage of pandas' powerful `Styler` object. Begin by styling your pandas DataFrame to your heart's content, using the myriad styling options available to you. Once you've crafted the visual representation of your data with colors, conditional formats, and more, the Clickable Table component seamlessly renders your `Styler` object as interactive HTML. With clickable functionality layered on top, each cell in your table becomes an interactive element, allowing users to engage with the data more intuitively.
 
 ## Screenshot
-![Clickable Table Screenshot](Screenshot.png)
+![Clickable Table Demo](Screenshot.png)
 
 ## Features
 
@@ -21,6 +21,7 @@ The Clickable Table component takes full advantage of pandas' powerful `Styler` 
 - **Multiple Data Bar Charts**: Display proportional bars for numeric data with customizable min/max values
 - **David Hum Columns**: Named after my dear colleague David Hum, these special columns display percentage bars for numeric values while highlighting text values with custom background colors (a somewhat speechless requirement, but David is great, so I implemented it anyway!)
 - **Range Charts**: Visualize data ranges with customizable dots representing values like high/low points
+- **Hidden Calculation Columns**: Hide columns that are needed for calculations but not for display
 - **Custom Column Widths**: Set specific widths for each column for better readability
 - **Streamlit Theme Integration**: Automatically adapts to your Streamlit theme colors
 
@@ -31,7 +32,7 @@ The Clickable Table component takes full advantage of pandas' powerful `Styler` 
 To bring interactive tables into your Streamlit applications, download the whl file from the dist folder, install the component using pip:
 
 ```bash
-pip install clickable_table-0.0.7.4-py3-none-any.whl
+pip install clickable_table-0.0.7.5-py3-none-any.whl
 ```
 
 ## Usage
@@ -108,6 +109,8 @@ column_width = [
     '100px', '100px', '100px', '100px', '100px', '150px'
 ]
 
+hidden_columns = [6, 7, 8, 9] 
+
 # Create the clickable table
 return_value = clickable_table(
     df=df,
@@ -117,6 +120,7 @@ return_value = clickable_table(
     range_chart=range_chart,
     idx_col_name='Tenor Bucket',
     column_width=column_width,
+    hidden_columns=hidden_columns,
     max_height="300px",
     key="test"
 )
@@ -140,7 +144,7 @@ data_bar_columns = [
 ```
 
 ### David Hum Columns
-Named after my dear colleague David Hum, these special columns display percentage bars for numeric values while highlighting text values with custom background colors:
+Special columns display percentage bars for numeric values while highlighting text values with custom background colors:
 
 ```python
 david_hum_columns = [
@@ -165,6 +169,20 @@ range_chart = [
      'current_color': 'black'          # Color for current value dot
     }
 ]
+```
+
+### Hiding Calculation Columns
+Some visualizations (like range charts) need data columns that you might not want to display. You can hide these columns while still using their values for calculations:
+
+```python
+# Specify which columns to hide (by index)
+hidden_columns = [6, 7, 8, 9]  # Calculation columns used by the range chart
+
+# The columns will be hidden but still available for calculations
+clickable_table(
+    # ... other parameters ...
+    
+)
 ```
 
 ## Contributing
