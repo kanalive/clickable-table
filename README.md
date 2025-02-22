@@ -12,6 +12,9 @@ The Clickable Table component for Streamlit bridges the gap between static table
 
 The Clickable Table component takes full advantage of pandas' powerful `Styler` object. Begin by styling your pandas DataFrame to your heart's content, using the myriad styling options available to you. Once you've crafted the visual representation of your data with colors, conditional formats, and more, the Clickable Table component seamlessly renders your `Styler` object as interactive HTML. With clickable functionality layered on top, each cell in your table becomes an interactive element, allowing users to engage with the data more intuitively.
 
+## Screenshot
+![Clickable Table Screenshot](Screenshot.png)
+
 ## Features
 
 - **Interactive Cells**: Click on any cell to capture its data for use in filters or other visualizations
