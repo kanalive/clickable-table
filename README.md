@@ -1,4 +1,4 @@
-# Clickable Table Component for Streamlit
+# Interactive Data Table Component for Streamlit
 
 ## A Word from the Karina
 
@@ -8,19 +8,29 @@ While the wonderful team at Streamlit is paving the way for such interactive fea
 
 ## About This Component
 
-The Clickable Table component for Streamlit bridges the gap between static tables and interactive data exploration. It enables users to click on any cell within a table, capture the cell's data, and use it to refine data filters or adjust chart graphs dynamically. This functionality is central to data analysis and dashboard creation.
+The Interactive Data Table component for Streamlit goes far beyond the capabilities of standard tables. It combines clickable cells with rich data visualizations, dynamic styling, and interactive features that make your data come alive. This component enables users to:
 
-The Clickable Table component takes full advantage of pandas' powerful `Styler` object. Begin by styling your pandas DataFrame to your heart's content, using the myriad styling options available to you. Once you've crafted the visual representation of your data with colors, conditional formats, and more, the Clickable Table component seamlessly renders your `Styler` object as interactive HTML. With clickable functionality layered on top, each cell in your table becomes an interactive element, allowing users to engage with the data more intuitively.
+- Click on any cell to capture its data for use in downstream filtering or visualization
+- Display rich data visualizations directly within table cells
+- Apply customized visual indicators for recommended values
+- Create interactive tooltips that reveal additional context
+- Style specific columns with conditional formatting
+- And much more!
+
+This component takes full advantage of pandas' powerful `Styler` object while adding layers of interactivity and visualization capabilities that static tables simply can't provide.
 
 ## Screenshot
-![Clickable Table Demo](images/Screenshot.png)
+![Interactive Table Demo](images/Screenshot.png)
 
 ## Features
 
-- **Interactive Cells**: Click on any cell to capture its data for use in filters or other visualizations
-- **Multiple Data Bar Charts**: Display proportional bars for numeric data with customizable min/max values
+- **Clickable Cells**: Click on any cell to capture its data for use in filters or other visualizations
+- **Data Bar Charts**: Display proportional bars for numeric data with customizable min/max values
+- **Recommended Value Indicators**: Show target/recommended values with customizable line colors
+- **Interactive Tooltips**: Hover over cells to see detailed information including target values
 - **David Hum Columns**: Named after my dear colleague David Hum, these special columns display percentage bars for numeric values while highlighting text values with custom background colors (a somewhat speechless requirement, but David is great, so I implemented it anyway!)
 - **Range Charts**: Visualize data ranges with customizable dots representing values like high/low points
+- **Column-Specific Styling**: Apply conditional formatting only to specific columns
 - **Hidden Calculation Columns**: Hide columns that are needed for calculations but not for display
 - **Custom Column Widths**: Set specific widths for each column for better readability
 - **Streamlit Theme Integration**: Automatically adapts to your Streamlit theme colors
@@ -36,87 +46,73 @@ pip install clickable_table-0.0.7.5-py3-none-any.whl
 ```
 
 ## Usage
-Here's a simple example of how to use the Clickable Table component in your Streamlit app:
+Here's a simple example of how to use the Interactive Data Table component in your Streamlit app:
 
 ```python
 import streamlit as st
 from clickable_table import clickable_table
 import pandas as pd
 
-st.subheader("Test Clickable Table")
+st.subheader("Interactive Data Table Example")
 
 # Sample data
 data = {
     'Epoch': ["R 1", "R 2", "R 3", "R 4", "R 5", "Total"],
-    'C 1': [2087627, -872765, -145564, -337304, 74001, 805085],
-    'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
-    'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
-    'C 4': ['Below Average', 20.0, 59.2, 33.2, 90.0, 'Above Average'],
+    'Revenue': [2087627, -872765, -145564, -337304, 74001, 805085],
+    'Revenue Target': [2500000, -500000, 0, -200000, 100000, 900000],
+    'Margin %': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
     'Long Term High': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028],  
     'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
-    'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
-    'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
-    'Current': [1.166, 1.365, 0.997, 1.110, 0.863, 0.709],
     'Range Chart': ["", "", "", "", "", ""]  
 }
 
-def style_dataframe(df):
-    # Function to apply conditional formatting
+def style_dataframe(df, columns_to_style=None):
+    """Apply styling to specific columns"""
     def apply_conditional_formatting(val):
         try:
             val = float(val)
-            if val > 1.5:
-                return 'background-color: #FFC0CB'  # Light red
-            elif val < -1.5:
-                return 'background-color: #90EE90'  # Light green
-        except (ValueError, TypeError):
-            pass
-        return ''
+            if val > 500:
+                return 'background-color: #FFC0CB'  
+            elif val < -500:
+                return 'background-color: #90EE90'  
+            return ''
+        except ValueError:
+            return None
+    
+    # Apply styling only to specified columns
+    if columns_to_style:
+        col_names = [df.columns[i] for i in columns_to_style if i < len(df.columns)]
+        return df.style.applymap(apply_conditional_formatting, subset=col_names)
+    else:
+        return df.style.applymap(apply_conditional_formatting)
 
-    # Apply the styling
-    return df.style.applymap(apply_conditional_formatting)
-
-# Create and prepare DataFrame
+# Create DataFrame and set index
 df = pd.DataFrame(data)
 df = df.set_index("Epoch")
 df.index.name = None
 
-# Component configurations
+# Configure visualizations
 data_bar_columns = [
-    {'col_idx': 1, 'min': -1000000, 'max': 2500000},  # C 1 column
-    {'col_idx': 3, 'min': -2, 'max': 2}               # C 3 column
-]
-
-david_hum_columns = [
-    {'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}
+    {'col_idx': 1, 'min': -1000000, 'max': 2500000, 'recommended_idx': 2, 'line_color': '#FF0000'}
 ]
 
 range_chart = [
-    {'col_idx': 10, 
-     'long_term_high_idx': 5,
-     'long_term_low_idx': 6,
-     'short_term_high_idx': 7,
-     'short_term_low_idx': 8,
-     'current_idx': 9, 
+    {'col_idx': 6, 
+     'long_term_high_idx': 4,
+     'long_term_low_idx': 5,
      'long_term_color': 'blue', 
-     'short_term_color': 'green', 
      'current_color': 'black'
     }
 ]
 
-column_width = [
-    '100px', '120px', '100px', '100px', '150px',
-    '100px', '100px', '100px', '100px', '100px', '150px'
-]
+column_width = ['100px', '120px', '120px', '100px', '100px', '100px', '150px']
+hidden_columns = [2]  # Hide the target column
 
-hidden_columns = [6, 7, 8, 9] 
-
-# Create the clickable table
+# Create the interactive table
 return_value = clickable_table(
     df=df,
-    styling_function=style_dataframe,
+    styling_function=lambda df: style_dataframe(df, [1]),  # Only style the Revenue column
     data_bar_columns=data_bar_columns,
-    david_hum_columns=david_hum_columns,
     range_chart=range_chart,
     idx_col_name='Tenor Bucket',
     column_width=column_width,
@@ -133,17 +129,21 @@ if return_value:
 
 ## Advanced Visualization Options
 
-### Data Bar Charts
-Create proportional bar charts inside cells with negative and positive values:
+### Data Bar Charts with Recommended Values
+Create proportional bar charts inside cells with negative and positive values, plus recommended value indicators:
 
 ```python
 data_bar_columns = [
-    {'col_idx': 1, 'min': -1000000, 'max': 2500000},  # Column 1
-    {'col_idx': 3, 'min': -2, 'max': 2}               # Column 3
+    {
+        'col_idx': 1,                # Column index to display the bar chart
+        'min': -1000000,             # Minimum value for scaling
+        'max': 2500000,              # Maximum value for scaling
+        'recommended_idx': 2,        # Column containing recommended/target values
+        'line_color': '#0000FF'      # Color for the recommendation indicator lines
+    }
 ]
 ```
-![Data Bar Charts](images/data_bar_chart.png)
-
+![Data Bar Charts with Recommendations](images/data_bar_chart.png)
 
 ### David Hum Columns
 Special columns display percentage bars for numeric values while highlighting text values with custom background colors:
@@ -175,19 +175,41 @@ range_chart = [
 ```
 ![Range Charts](images/range_chart.png)
 
+### Column-Specific Styling
+Apply conditional formatting to only specific columns:
+
+```python
+# Define columns to style (by column index, 0-based)
+columns_to_style = [1, 3]  # Only style the Revenue and Margin columns
+
+# Create function to apply styling
+def style_specific_columns(df):
+    return style_dataframe(df, columns_to_style)
+
+# Use in clickable_table
+clickable_table(
+    df=df,
+    styling_function=style_specific_columns,
+    # ... other parameters ...
+)
+```
+
 ### Hiding Calculation Columns
-Some visualizations (like range charts) need data columns that you might not want to display. You can hide these columns while still using their values for calculations:
+Some visualizations (like range charts or recommended values) need data columns that you might not want to display. You can hide these columns while still using their values for calculations:
 
 ```python
 # Specify which columns to hide (by index)
-hidden_columns = [6, 7, 8, 9]  # Calculation columns used by the range chart
+hidden_columns = [2, 6, 7, 8, 9]  # Hide target and calculation columns
 
 # The columns will be hidden but still available for calculations
 clickable_table(
     # ... other parameters ...
-    
+    hidden_columns=hidden_columns
 )
 ```
+
+### Interactive Tooltips
+When hovering over data bar charts with recommended values, a tooltip will automatically appear showing both the actual and target values along with their column names.
 
 ## Contributing
 If you'd like to contribute to this component, please feel free to make a pull request.

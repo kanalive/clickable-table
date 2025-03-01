@@ -32,8 +32,10 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
     styling_function : function, optional
         Function to apply pandas styling to the dataframe
     data_bar_columns : list of dict, optional
-        List of data bar chart configurations, each with col_idx, min, and max
-        Example: [{'col_idx': 1, 'min': -100, 'max': 100}, {'col_idx': 2, 'min': 0, 'max': 50}]
+        List of data bar chart configurations, each with col_idx, min, max, and optional recommended_idx
+        Example: [{'col_idx': 1, 'min': -100, 'max': 100, 'recommended_idx': 2}, 
+                 {'col_idx': 3, 'min': 0, 'max': 50}]
+        The 'recommended_idx' is the column index containing the recommended value to be displayed as a marker
     david_hum_columns : list of dict, optional
         List of david hum chart configurations
         Example: [{'col_idx': 3, 'min': 0, 'max': 100, 'exception_col_color': "yellow"}, 
@@ -105,6 +107,7 @@ if not _RELEASE:
         'C 1': [2087627, -872765, -145564, -337304, 74001, 805085],
         'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
         'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
+        'C 3 Recommended': [1.2, -1, 1, -1.8, 1, -1.5],  # Recommended values
         'C 4': ['Below Average', 20.0, 59.2, 33.2, 90.0, 'Above Average'],
         'C 5': [45.0, 'Good', 62.5, 28.7, 75.2, 'Excellent'],
         'Long Term High': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028],  
@@ -144,21 +147,21 @@ if not _RELEASE:
     # Example configuration for multiple columns of each type
     data_bar_columns = [
         {'col_idx': 1, 'min': -1000000, 'max': 2500000},  # C 1 column - numbers with wide range
-        {'col_idx': 3, 'min': -2, 'max': 2}               # C 3 column - numbers with smaller range
+        {'col_idx': 3, 'min': -2, 'max': 2, 'recommended_idx': 4, 'line_color': '#000000'}               # C 3 column - numbers with smaller range
     ]
     
     david_hum_columns = [
-        {'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "yellow"},  # C 4 column
-        {'col_idx': 5, 'min': 0, 'max': 100, 'exception_col_color': "lightblue"} # C 5 column
+        {'col_idx': 5, 'min': 0, 'max': 100, 'exception_col_color': "yellow"},  # C 4 column
+        {'col_idx': 6, 'min': 0, 'max': 100, 'exception_col_color': "lightblue"} # C 5 column
     ]
     
     range_chart = [
-        {'col_idx': 11, 
-         'long_term_high_idx': 6,
-         'long_term_low_idx': 7,
-         'short_term_high_idx': 8,
-         'short_term_low_idx': 9,
-         'current_idx': 10, 
+        {'col_idx': 12, 
+         'long_term_high_idx': 7,
+         'long_term_low_idx': 8,
+         'short_term_high_idx': 9,
+         'short_term_low_idx': 10,
+         'current_idx': 11, 
          'long_term_color': 'blue', 
          'short_term_color': 'green', 
          'current_color': 'black'
@@ -166,12 +169,12 @@ if not _RELEASE:
     ]
     
     column_width = [
-        '100px', '120px', '100px', '100px', '130px', '130px',
-        '100px', '100px', '100px', '100px', '100px', '150px'
+        '100px','200px', '120px', '200px', '10px', '200px', '200px',
+        '10px', '10px', '10px', '100px', '150px'
     ]
     
     # Columns to be hidden
-    hidden_columns = [6, 7, 8, 9]  # Long/Short Term High/Low columns
+    hidden_columns = [4,7, 8, 9, 10]  # Long/Short Term High/Low columns
     
     # The CSS for hiding columns is defined in app.css (.hide-column { display: none !important; })
     # No need to add additional CSS in Streamlit

@@ -124,7 +124,6 @@ class ClickableTable extends StreamlitComponentBase<State> {
   }
 
   private applyStylesToPercentageCells = (config: any): void => {
-
     // First, get the headers
     const tableContainer = document.querySelector('.clickabletable-container');
     if (!tableContainer ||!this.props.args.config ) return;
@@ -148,8 +147,17 @@ class ClickableTable extends StreamlitComponentBase<State> {
     rows.forEach(row => {
       // Apply styles to the cells of the identified percentage columns
       if (Array.isArray(dataBarChartColumns)) {
-        dataBarChartColumns.forEach((columnConfig: { col_idx: any; min: any; max: any }) => {
-          const { col_idx, min, max } = columnConfig;
+        dataBarChartColumns.forEach((columnConfig: { 
+          col_idx: any; 
+          min: any; 
+          max: any;
+          recommended_idx?: any;
+          line_color?: string; // New parameter for line color
+        }) => {
+          const { col_idx, min, max, recommended_idx, line_color } = columnConfig;
+
+          // Default line color if not specified
+          const markerColor = line_color || '#0c7500';
 
           const scaleFactorLeft = 50 / Math.abs(min);
           const scaleFactorRight = 50 / max;
@@ -171,43 +179,191 @@ class ClickableTable extends StreamlitComponentBase<State> {
               // Parse directly as a float if it's a numeric value
               numericValue = parseFloat(cellContent);
           }
-    
+
+          // Get column header name for tooltip
+          const headerElement = headers[col_idx];
+          const columnName = headerElement ? headerElement.textContent || `Column ${col_idx}` : `Column ${col_idx}`;
+
+          // Clear the cell's content before adding elements
+          cell.textContent = '';
+          
+          // Create a container for better positioning control
+          const container = document.createElement('div');
+          container.style.position = 'relative';
+          container.style.width = '100%';
+          container.style.height = '20px';
+          
           // Create the bar element
           const bar = document.createElement('div');
-          bar.style.position = 'relative';
+          bar.style.position = 'absolute';
           bar.style.height = '20px';
           bar.style.top = '0';
-          bar.style.float = 'left';
           
-          // Determine the bar's color and position based on the value
+          // Determine if the bar goes left or right
+          const isNegative = numericValue < 0;
           
-          if (numericValue < 0) {
-            bar.style.left = `${50 - Math.abs(numericValue) * scaleFactorLeft}%`;
+          // Add the numeric value as text
+          const textContainer = document.createElement('div');
+          textContainer.style.position = 'absolute';
+          textContainer.style.zIndex = '100';
+          textContainer.style.padding = '0 5px';
+          textContainer.textContent = cellContent.trim();
+          
+          // Determine the bar's color, position, and text position based on the value
+          if (isNegative) {
+            bar.style.right = '50%';
+            bar.style.left = 'auto';
             bar.style.backgroundColor = '#FF0000'; // Red for negative values
             bar.style.width = `${Math.abs(numericValue) * scaleFactorLeft}%`;
             bar.style.borderRight = "1px solid black";
-        } else {
+            
+            // For negative values, position text on the right
+            textContainer.style.left = 'auto';
+            textContainer.style.right = '5px';
+            textContainer.style.textAlign = 'right';
+          } else {
             bar.style.left = '50%';
+            bar.style.right = 'auto';
             bar.style.backgroundColor = '#0000FF'; // Blue for positive values
             bar.style.width = `${numericValue * scaleFactorRight}%`;
             bar.style.borderLeft = "1px solid black";
-        }
-        bar.style.opacity = '50%';
-    
-          // Clear the cell's content and append the bar
-          cell.textContent = '';
-          cell.appendChild(bar);
-    
-          // Add the numeric value as text
-          const textContainer = document.createElement('div');
-          textContainer.style.position = 'relative';
-          textContainer.style.padding = '0 5px';
-          textContainer.style.float = 'right';
-          textContainer.style.zIndex = '100';
-          textContainer.textContent = cellContent.trim(); 
-    
-          // Append the text container
-          cell.appendChild(textContainer);
+            
+            // For positive values, position text on the left
+            textContainer.style.right = 'auto';
+            textContainer.style.left = '5px';
+            textContainer.style.textAlign = 'left';
+          }
+          bar.style.opacity = '50%';
+
+          // Append elements to container
+          container.appendChild(bar);
+          container.appendChild(textContainer);
+          
+          // Add the container to the cell
+          cell.appendChild(container);
+
+          // Add hover functionality and tooltip
+          let recommendedValue: number | null = null;
+          let recommendedColumnName: string = "";
+
+          // Add the recommended value marker if specified
+          if (recommended_idx !== undefined) {
+            // Get the recommended value from the specified column
+            const recommendedCell = row.children[recommended_idx] as HTMLElement;
+            if (recommendedCell) {
+              recommendedValue = parseFloat(recommendedCell.textContent || '0');
+              
+              // Get the recommended column name for tooltip
+              const recommendedHeaderElement = headers[recommended_idx];
+              recommendedColumnName = recommendedHeaderElement ? 
+                recommendedHeaderElement.textContent || `Column ${recommended_idx}` : 
+                `Column ${recommended_idx}`;
+              
+              if (!isNaN(recommendedValue)) {
+                // Calculate position based on value
+                let markerPosition;
+                const barStartPosition = isNegative ? 50 - Math.abs(numericValue) * scaleFactorLeft : 50;
+                
+                if (recommendedValue < 0) {
+                  markerPosition = 50 - Math.abs(recommendedValue) * scaleFactorLeft;
+                } else {
+                  markerPosition = 50 + (recommendedValue * scaleFactorRight);
+                }
+                
+                // Create horizontal connector line
+                const horizontalLine = document.createElement('div');
+                horizontalLine.style.position = 'absolute';
+                horizontalLine.style.top = '10px'; // Middle of the cell
+                horizontalLine.style.height = '1px';
+                horizontalLine.style.backgroundColor = markerColor; // Use the custom color
+                horizontalLine.style.zIndex = '45';
+                
+                // Set line position and width based on the direction
+                if (isNegative) {
+                  // For negative values, connect from the marker to the middle (50%)
+                  const lineStart = Math.min(markerPosition, 50);
+                  const lineEnd = Math.max(markerPosition, 50);
+                  horizontalLine.style.left = `${lineStart}%`;
+                  horizontalLine.style.width = `${lineEnd - lineStart}%`;
+                } else {
+                  // For positive values, connect from the middle (50%) to the marker
+                  const lineStart = Math.min(markerPosition, 50);
+                  const lineEnd = Math.max(markerPosition, 50);
+                  horizontalLine.style.left = `${lineStart}%`;
+                  horizontalLine.style.width = `${lineEnd - lineStart}%`;
+                }
+                
+                // Create the vertical marker
+                const verticalMarker = document.createElement('div');
+                verticalMarker.style.position = 'absolute';
+                verticalMarker.style.width = '1px';
+                verticalMarker.style.height = '10px';
+                verticalMarker.style.backgroundColor = markerColor; // Use the custom color
+                verticalMarker.style.top = '6px';
+                verticalMarker.style.left = `${markerPosition}%`;
+                verticalMarker.style.transform = 'translateX(-50%)';
+                verticalMarker.style.zIndex = '50';
+                
+                // Add lines to container
+                container.appendChild(horizontalLine);
+                container.appendChild(verticalMarker);
+              }
+            }
+          }
+
+          // Create tooltip for the entire cell
+          if (recommended_idx !== undefined && recommendedValue !== null) {
+            // Create custom tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'data-bar-tooltip';
+            tooltip.style.display = 'none';
+            tooltip.style.position = 'absolute';
+            tooltip.style.backgroundColor = 'rgba(218, 218, 218, 0.76)';
+            tooltip.style.color = 'black';
+            tooltip.style.padding = '5px 10px';
+            tooltip.style.marginTop = '-20px';
+            tooltip.style.marginLeft = '120px';
+            tooltip.style.borderRadius = '5px';
+            tooltip.style.zIndex = '1000';
+            tooltip.style.whiteSpace = 'nowrap';
+            tooltip.style.pointerEvents = 'none';
+            tooltip.innerHTML = `${columnName}: ${numericValue}<br>${recommendedColumnName}: ${recommendedValue}`;
+            
+            document.body.appendChild(tooltip);
+            
+            // Show tooltip on mouseover
+            cell.addEventListener('mouseover', (e) => {
+              const rect = cell.getBoundingClientRect();
+              tooltip.style.left = `${rect.left + window.scrollX + rect.width/2}px`;
+              tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 5}px`;
+              tooltip.style.transform = 'translateX(-50%)';
+              tooltip.style.display = 'block';
+            });
+            
+            // Hide tooltip on mouseout
+            cell.addEventListener('mouseout', () => {
+              tooltip.style.display = 'none';
+            });
+            
+            // Clean up on cell removal
+            const observer = new MutationObserver((mutations) => {
+              mutations.forEach((mutation) => {
+                if (mutation.removedNodes) {
+                  mutation.removedNodes.forEach((node) => {
+                    if (node === cell || cell.contains(node as Node)) {
+                      document.body.removeChild(tooltip);
+                      observer.disconnect();
+                    }
+                  });
+                }
+              });
+            });
+            
+            observer.observe(cell.parentElement || document.body, { 
+              childList: true, 
+              subtree: true 
+            });
+          }
         });
       }
       if (Array.isArray(davidHumColumns)) {

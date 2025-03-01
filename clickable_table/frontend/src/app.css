@@ -3,6 +3,7 @@
   --border-color: #cccccc;    /* Default border color */
   --hover-color:red;
   --max-height: 800px;
+  --recommended-marker-color: #000000; /* Color for the recommended value marker */
 }
 
 td, th {
@@ -67,6 +68,16 @@ td:hover {
 .positive {
   background-color: blue;
   left: 50%;
+}
+
+/* New styles for recommended value marker */
+.recommended-marker {
+  position: absolute;
+  width: 2px;
+  height: 16px;
+  background-color: var(--recommended-marker-color);
+  z-index: 50;
+  transform: translateX(-50%);
 }
 
 .range-line {
