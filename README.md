@@ -20,7 +20,7 @@ The Interactive Data Table component for Streamlit goes far beyond the capabilit
 This component takes full advantage of pandas' powerful `Styler` object while adding layers of interactivity and visualization capabilities that static tables simply can't provide.
 
 ## Screenshot
-![Interactive Table Demo](images/Screenshot.png)
+![Interactive Table Demo](images/Screenshot0.7.6.png)
 
 ## Features
 
@@ -42,7 +42,7 @@ This component takes full advantage of pandas' powerful `Styler` object while ad
 To bring interactive tables into your Streamlit applications, download the whl file from the dist folder, install the component using pip:
 
 ```bash
-pip install clickable_table-0.0.7.5-py3-none-any.whl
+pip install clickable_table-0.0.7.6-py3-none-any.whl
 ```
 
 ## Usage
@@ -143,7 +143,7 @@ data_bar_columns = [
     }
 ]
 ```
-![Data Bar Charts with Recommendations](images/data_bar_chart.png)
+![Data Bar Charts with Recommendations](images/data_bar_chart0.7.6.png)
 
 ### David Hum Columns
 Special columns display percentage bars for numeric values while highlighting text values with custom background colors:
