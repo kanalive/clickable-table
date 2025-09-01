@@ -2,6 +2,8 @@
 
 A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, and custom text display capabilities.
 
+![Data Bar Chart Example](images/data_bar_chart0.7.7.png)
+
 ## Features
 
 ### 🎯 **Interactive Table**
@@ -20,6 +22,8 @@ A powerful, interactive table component for Streamlit with advanced visualizatio
 - Percentage-based visualizations
 - Exception highlighting for non-numeric values
 - Customizable color schemes
+
+![David Hum Column Chart](images/david_hum_column_chart.png)
 
 ### 📈 **Range Charts**
 - 5-dot range visualization (Long Term High/Low, Short Term High/Low, Current)

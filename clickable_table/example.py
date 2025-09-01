@@ -140,7 +140,7 @@ else:
 
 # Add explanation of new features
 st.markdown("""
-### 0.7.6 Enhanced Features
+### 0.0.7.7 Enhanced Features
 
 This table now includes:
 
@@ -159,7 +159,13 @@ This table now includes:
 4. **Range Chart Text Display**:
    - When the current value is below both short-term and long-term lows, custom text can be displayed
    - Use the 'low_text' parameter in range_chart configuration to specify the message
-   - In this example, "Below Range" will appear when current < both thresholds
+   - In this example, "⚠️Below Range" will appear when current < both thresholds
+   - The text completely replaces the range chart (dots and lines) for better visibility
+
+5. **Technical Improvements**:
+   - Fixed deprecated pandas warnings
+   - Enhanced error handling and data type consistency
+   - Improved performance and stability
 
 Try hovering over the Revenue or Margin % columns to see the tooltips in action!
 """)
