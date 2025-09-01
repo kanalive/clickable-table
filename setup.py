@@ -3,11 +3,14 @@ from pathlib import Path
 import setuptools
 
 this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
+try:
+    long_description = (this_directory / "README.md").read_text(encoding='utf-8')
+except UnicodeDecodeError:
+    long_description = (this_directory / "README.md").read_text(encoding='latin-1')
 
 setuptools.setup(
     name="clickable_table",
-    version="0.0.7.6",
+    version="0.0.7.7",
     author="Karina Li",
     author_email="karina.w.li@outlook.com",
     description="A clickable table component for Streamlit",

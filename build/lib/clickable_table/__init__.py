@@ -68,12 +68,16 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
         
     # Configure the table styling
     if styling_function is not None:
-        styled_df = styling_function(df)
+        try:
+            styled_df = styling_function(df)
+            # Generate HTML from styled dataframe
+            html = styled_df.to_html()
+        except Exception as e:
+            st.warning(f"Styling function failed: {e}. Using unstyled table.")
+            html = df.to_html()
     else:
-        styled_df = df.style
-        
-    # Generate HTML from styled dataframe
-    html = styled_df.to_html()
+        # Generate HTML from unstyled dataframe
+        html = df.to_html()
     
     # Build the configuration object
     config = {
@@ -107,14 +111,14 @@ if not _RELEASE:
         'C 1': [2087627, -872765, -145564, -337304, 74001, 805085],
         'C 2': [83.5, -34.9, -11.7, -33.7, 7.4, 32.2],
         'C 3': [0.987, -1.527, -1.583, -1.475, -1.348, -1.261],
-        'C 3 Recommended': [1.2, -1, 1, -1.8, 1, -1.5],  # Recommended values
-        'C 4': ['Below Average', 20.0, 59.2, 33.2, 90.0, 'Above Average'],
-        'C 5': [45.0, 'Good', 62.5, 28.7, 75.2, 'Excellent'],
+        'C 3 Recommended': [1.2, -1.0, 1.0, -1.8, 1.0, -1.5],  # Recommended values
+        'C 4': ['Below Average', '20.0', '59.2', '33.2', '90.0', 'Above Average'],
+        'C 5': ['45.0', 'Good', '62.5', '28.7', '75.2', 'Excellent'],
         'Long Term High': [1.290, 1.382, 1.361, 1.268, 1.160, 1.028],  
         'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
         'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
         'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
-        'Current': [1.166, 1.365, 0.997, 1.110, 0.863, 0.709],
+        'Current': [0.1, 1.365, 0.997, 1.110, 0.863, 0.709],
         'Range Chart': ["", "", "", "", "", ""]  
     }
 
@@ -130,17 +134,30 @@ if not _RELEASE:
                 else:
                     color = ''
                 return f'background-color: {color}'
-            except ValueError:
+            except (ValueError, TypeError):
                 return None
 
         # Initialize Styler object
         styler = df.style
-        styler = styler.applymap(apply_conditional_formatting)
+        
+        # Only apply styling to numeric columns to avoid Arrow conversion issues
+        numeric_columns = df.select_dtypes(include=['number']).columns
+        if len(numeric_columns) > 0:
+            styler = styler.map(apply_conditional_formatting, subset=numeric_columns)
         
         return styler
 
     # Creating the DataFrame
     df = pd.DataFrame(data)
+    
+    # Force specific columns to be string type to avoid Arrow conversion issues
+    df['C 4'] = df['C 4'].astype(str)
+    df['C 5'] = df['C 5'].astype(str)
+    
+    # Debug: Print data types to verify
+    st.write("### DataFrame Data Types:")
+    st.write(df.dtypes)
+    
     df = df.set_index("Epoch")
     df.index.name = None
     
@@ -164,7 +181,8 @@ if not _RELEASE:
          'current_idx': 11, 
          'long_term_color': 'blue', 
          'short_term_color': 'green', 
-         'current_color': 'black'
+         'current_color': 'black',
+         'low_text': '⚠️ Below Range'  # Text to display when current < both thresholds
         }
     ]
     
@@ -201,4 +219,5 @@ if not _RELEASE:
         
     # Show the regular dataframe for comparison
     st.write("### Regular DataFrame (for comparison)")
-    st.dataframe(style_dataframe(df))
+    # Commented out to avoid Arrow conversion issues during development
+    # st.dataframe(style_dataframe(df))

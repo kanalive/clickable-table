@@ -88,6 +88,29 @@ td:hover {
   
 }
 
+/* Styles for range chart text overlay */
+.range-chart-text {
+  position: relative;
+  /* top: 0;
+  left: 0;
+  width: 100%; */
+
+}
+
+/* Ensure range chart cells have proper positioning for text overlay */
+.range-chart-cell {
+  position: relative;
+  /* min-height: 40px; */
+}
+
+/* When only text is displayed, center it vertically */
+.range-chart-cell:has(.range-chart-text:only-child) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* min-height: 50px; */
+}
+
 .dot {
   width: 10px;
   height: 10px;

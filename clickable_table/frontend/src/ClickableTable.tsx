@@ -428,7 +428,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
       }
       if (Array.isArray(rangeChartColumns)) {
         rangeChartColumns.forEach((rangeConfig: any) => {
-          const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color } = rangeConfig;
+          const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color, low_text } = rangeConfig;
 
           // Extract the data for this row from the specified column indices
           const longTermHigh = parseFloat(row.children[long_term_high_idx].textContent || '0');
@@ -442,6 +442,9 @@ class ClickableTable extends StreamlitComponentBase<State> {
           const rangeCell = row.children[col_idx] as HTMLElement;
 
           if (!rangeCell) return;
+          
+          // Add CSS class for proper positioning
+          rangeCell.className = 'range-chart-cell';
 
           // Create the 5-dot range chart
           const rangeChart = document.createElement('div');
@@ -481,9 +484,21 @@ class ClickableTable extends StreamlitComponentBase<State> {
           rangeChart.appendChild(createDot(longTermHighPos, long_term_color)); // Long Term High (orange)
           rangeChart.appendChild(createDot(currentPos, current_color)); // Current (green)
 
-          // Clear the existing cell content and append the range chart
-          rangeCell.textContent = '';
-          rangeCell.appendChild(rangeChart);
+          // Check if current is lower than both short term low and long term low
+          if (low_text && current < shortTermLow && current < longTermLow) {
+            // Create text container for the low value message
+            const textContainer = document.createElement('div');
+            textContainer.className = 'range-chart-text';
+            textContainer.textContent = low_text;
+            
+            // Clear the existing cell content and append ONLY the text (no range chart)
+            rangeCell.textContent = '';
+            rangeCell.appendChild(textContainer);
+          } else {
+            // Clear the existing cell content and append only the range chart
+            rangeCell.textContent = '';
+            rangeCell.appendChild(rangeChart);
+          }
         });
       }
 

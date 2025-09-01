@@ -19,7 +19,7 @@ data = {
     'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
     'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
     'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
-    'Current': [1.166, 1.365, 0.997, 1.110, 0.863, 0.709],
+    'Current': [0, 1.365, 0.997, 1.110, 0.863, 0.709],
     'Range Chart': ["", "", "", "", "", ""]  
 }
 
@@ -50,7 +50,7 @@ def style_dataframe(df, columns_to_style=None):
     # Get columns to style
     if columns_to_style is None:
         # Apply to all columns if none specified
-        return df.style.applymap(apply_conditional_formatting)
+        return df.style.map(apply_conditional_formatting)
     else:
         # Convert column indices to names if needed
         if all(isinstance(col, int) for col in columns_to_style):
@@ -61,7 +61,7 @@ def style_dataframe(df, columns_to_style=None):
             col_names = [col for col in columns_to_style if col in df.columns]
         
         # Apply styling only to specified columns
-        return df.style.applymap(
+        return df.style.map(
             apply_conditional_formatting,
             subset=col_names
         )
@@ -104,7 +104,8 @@ range_chart = [
      'current_idx': 12, 
      'long_term_color': 'blue', 
      'short_term_color': 'green', 
-     'current_color': 'black'
+     'current_color': 'black',
+     'low_text': '⚠️Below Range'  # Text to display when current is below both thresholds
     }
 ]
 
@@ -154,6 +155,11 @@ This table now includes:
 3. **Column-Specific Styling**:
    - Conditional formatting is only applied to specified columns
    - In this example, only the Growth column has conditional styling
+
+4. **Range Chart Text Display**:
+   - When the current value is below both short-term and long-term lows, custom text can be displayed
+   - Use the 'low_text' parameter in range_chart configuration to specify the message
+   - In this example, "Below Range" will appear when current < both thresholds
 
 Try hovering over the Revenue or Margin % columns to see the tooltips in action!
 """)
