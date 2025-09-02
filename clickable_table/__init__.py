@@ -182,7 +182,8 @@ if not _RELEASE:
          'long_term_color': 'blue', 
          'short_term_color': 'green', 
          'current_color': 'black',
-         'low_text': '⚠️ Below Range'  # Text to display when current < both thresholds
+         'low_text': '⚠️ Below Range',  # Text when current < both lows
+         'high_text': '⚠️ Above Range'  # Text when current > both highs
         }
     ]
     

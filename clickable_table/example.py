@@ -19,7 +19,7 @@ data = {
     'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
     'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
     'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
-    'Current': [0, 1.365, 0.997, 1.110, 0.863, 0.709],
+    'Current': [0, 11, 0.997, 1.110, 0.863, 0.709],
     'Range Chart': ["", "", "", "", "", ""]  
 }
 
@@ -105,7 +105,8 @@ range_chart = [
      'long_term_color': 'blue', 
      'short_term_color': 'green', 
      'current_color': 'black',
-     'low_text': '⚠️Below Range'  # Text to display when current is below both thresholds
+     'low_text': '⚠️Below Range',  # Text when current is below both lows
+     'high_text': '⚠️Above Range'  # Text when current is above both highs
     }
 ]
 

@@ -105,7 +105,8 @@ range_chart = [
         'long_term_color': 'blue',  # Long term dot color
         'short_term_color': 'green', # Short term dot color
         'current_color': 'red',     # Current value dot color
-        'low_text': '⚠️ Below Range'  # Text when current < both thresholds
+        'low_text': '⚠️ Below Range', # Text when current < both lows
+        'high_text': '⚠️ Above Range' # Text when current > both highs
     }
 ]
 
@@ -206,6 +207,7 @@ range_chart = [
 - **When text is displayed**: The entire range chart (dots and lines) is replaced by the text
 - **When text is not displayed**: The normal range chart with dots and lines is shown
 - **Styling**: The text appears with a warning-style appearance (red text, light red background, border)
+ - Supports both below-range (`low_text`) and above-range (`high_text`) messages
 
 ## Styling
 
@@ -228,6 +230,9 @@ To develop locally:
 3. The component will use localhost:3000 for development
 
 ## Version History
+
+### 0.0.7.8
+- Range chart text display when values are above thresholds
 
 ### 0.0.7.7
 - ✨ **NEW**: Range chart text display when values are below thresholds

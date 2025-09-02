@@ -428,7 +428,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
       }
       if (Array.isArray(rangeChartColumns)) {
         rangeChartColumns.forEach((rangeConfig: any) => {
-          const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color, low_text } = rangeConfig;
+          const { col_idx, long_term_high_idx, long_term_low_idx, short_term_high_idx, short_term_low_idx, current_idx, long_term_color, short_term_color, current_color, low_text, high_text } = rangeConfig;
 
           // Extract the data for this row from the specified column indices
           const longTermHigh = parseFloat(row.children[long_term_high_idx].textContent || '0');
@@ -492,6 +492,15 @@ class ClickableTable extends StreamlitComponentBase<State> {
             textContainer.textContent = low_text;
             
             // Clear the existing cell content and append ONLY the text (no range chart)
+            rangeCell.textContent = '';
+            rangeCell.appendChild(textContainer);
+          } else if (high_text && current > shortTermHigh && current > longTermHigh) {
+            // Create text container for the high value message
+            const textContainer = document.createElement('div');
+            textContainer.className = 'range-chart-text';
+            textContainer.textContent = high_text;
+
+            // Clear and append only text
             rangeCell.textContent = '';
             rangeCell.appendChild(textContainer);
           } else {

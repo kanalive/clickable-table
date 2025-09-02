@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: clickable-table
-Version: 0.0.7.7
+Version: 0.0.7.8
 Summary: A clickable table component for Streamlit
 Home-page: 
 Author: Karina Li
@@ -13,6 +13,8 @@ License-File: LICENSE
 # Clickable Table - Streamlit Custom Component
 
 A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, and custom text display capabilities.
+
+![Data Bar Chart Example](images/data_bar_chart0.7.7.png)
 
 ## Features
 
@@ -32,6 +34,8 @@ A powerful, interactive table component for Streamlit with advanced visualizatio
 - Percentage-based visualizations
 - Exception highlighting for non-numeric values
 - Customizable color schemes
+
+![David Hum Column Chart](images/david_hum_column_chart.png)
 
 ### 📈 **Range Charts**
 - 5-dot range visualization (Long Term High/Low, Short Term High/Low, Current)
@@ -113,7 +117,8 @@ range_chart = [
         'long_term_color': 'blue',  # Long term dot color
         'short_term_color': 'green', # Short term dot color
         'current_color': 'red',     # Current value dot color
-        'low_text': '⚠️ Below Range'  # Text when current < both thresholds
+        'low_text': '⚠️ Below Range', # Text when current < both lows
+        'high_text': '⚠️ Above Range' # Text when current > both highs
     }
 ]
 
@@ -214,6 +219,7 @@ range_chart = [
 - **When text is displayed**: The entire range chart (dots and lines) is replaced by the text
 - **When text is not displayed**: The normal range chart with dots and lines is shown
 - **Styling**: The text appears with a warning-style appearance (red text, light red background, border)
+ - Supports both below-range (`low_text`) and above-range (`high_text`) messages
 
 ## Styling
 
@@ -236,6 +242,9 @@ To develop locally:
 3. The component will use localhost:3000 for development
 
 ## Version History
+
+### 0.0.7.8
+- Range chart text display when values are above thresholds
 
 ### 0.0.7.7
 - ✨ **NEW**: Range chart text display when values are below thresholds
