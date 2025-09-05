@@ -19,7 +19,7 @@ data = {
     'Long Term Low': [0.260, 0.218, 0.353, 0.296, 0.266, 0.390],  
     'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
     'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
-    'Current': [0, 1.365, 0.997, 1.110, 0.863, 0.709],
+    'Current': [0, 11, 0.997, 1.110, 0.863, 0.709],
     'Range Chart': ["", "", "", "", "", ""]  
 }
 
@@ -105,7 +105,8 @@ range_chart = [
      'long_term_color': 'blue', 
      'short_term_color': 'green', 
      'current_color': 'black',
-     'low_text': '⚠️Below Range'  # Text to display when current is below both thresholds
+     'low_text': '⚠️Below Range',  # Text when current is below both lows
+     'high_text': '⚠️Above Range'  # Text when current is above both highs
     }
 ]
 
@@ -140,7 +141,7 @@ else:
 
 # Add explanation of new features
 st.markdown("""
-### 0.7.6 Enhanced Features
+### 0.0.7.7 Enhanced Features
 
 This table now includes:
 
@@ -159,7 +160,13 @@ This table now includes:
 4. **Range Chart Text Display**:
    - When the current value is below both short-term and long-term lows, custom text can be displayed
    - Use the 'low_text' parameter in range_chart configuration to specify the message
-   - In this example, "Below Range" will appear when current < both thresholds
+   - In this example, "⚠️Below Range" will appear when current < both thresholds
+   - The text completely replaces the range chart (dots and lines) for better visibility
+
+5. **Technical Improvements**:
+   - Fixed deprecated pandas warnings
+   - Enhanced error handling and data type consistency
+   - Improved performance and stability
 
 Try hovering over the Revenue or Margin % columns to see the tooltips in action!
 """)

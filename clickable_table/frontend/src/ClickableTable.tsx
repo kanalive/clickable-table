@@ -191,12 +191,12 @@ class ClickableTable extends StreamlitComponentBase<State> {
           const container = document.createElement('div');
           container.style.position = 'relative';
           container.style.width = '100%';
-          container.style.height = '20px';
+          container.style.height = '18px';
           
           // Create the bar element
           const bar = document.createElement('div');
           bar.style.position = 'absolute';
-          bar.style.height = '20px';
+          bar.style.height = '18px';
           bar.style.top = '0';
           
           // Determine if the bar goes left or right
@@ -213,9 +213,8 @@ class ClickableTable extends StreamlitComponentBase<State> {
           if (isNegative) {
             bar.style.right = '50%';
             bar.style.left = 'auto';
-            bar.style.backgroundColor = '#FF0000'; // Red for negative values
+            bar.style.backgroundColor = 'var(--neg-color)';
             bar.style.width = `${Math.abs(numericValue) * scaleFactorLeft}%`;
-            bar.style.borderRight = "1px solid black";
             
             // For negative values, position text on the right
             textContainer.style.left = 'auto';
@@ -224,16 +223,16 @@ class ClickableTable extends StreamlitComponentBase<State> {
           } else {
             bar.style.left = '50%';
             bar.style.right = 'auto';
-            bar.style.backgroundColor = '#0000FF'; // Blue for positive values
+            bar.style.backgroundColor = 'var(--pos-color)';
             bar.style.width = `${numericValue * scaleFactorRight}%`;
-            bar.style.borderLeft = "1px solid black";
             
             // For positive values, position text on the left
             textContainer.style.right = 'auto';
             textContainer.style.left = '5px';
             textContainer.style.textAlign = 'left';
           }
-          bar.style.opacity = '50%';
+          bar.style.opacity = '60%';
+          bar.style.borderRadius = '9px';
 
           // Append elements to container
           container.appendChild(bar);
@@ -270,36 +269,28 @@ class ClickableTable extends StreamlitComponentBase<State> {
                   markerPosition = 50 + (recommendedValue * scaleFactorRight);
                 }
                 
-                // Create horizontal connector line
+                // Create horizontal connector line to the center for context
                 const horizontalLine = document.createElement('div');
                 horizontalLine.style.position = 'absolute';
-                horizontalLine.style.top = '10px'; // Middle of the cell
-                horizontalLine.style.height = '1px';
-                horizontalLine.style.backgroundColor = markerColor; // Use the custom color
+                horizontalLine.style.top = '9px';
+                horizontalLine.style.height = '2px';
+                horizontalLine.style.backgroundColor = '#9CA3AF';
                 horizontalLine.style.zIndex = '45';
                 
-                // Set line position and width based on the direction
-                if (isNegative) {
-                  // For negative values, connect from the marker to the middle (50%)
-                  const lineStart = Math.min(markerPosition, 50);
-                  const lineEnd = Math.max(markerPosition, 50);
-                  horizontalLine.style.left = `${lineStart}%`;
-                  horizontalLine.style.width = `${lineEnd - lineStart}%`;
-                } else {
-                  // For positive values, connect from the middle (50%) to the marker
-                  const lineStart = Math.min(markerPosition, 50);
-                  const lineEnd = Math.max(markerPosition, 50);
-                  horizontalLine.style.left = `${lineStart}%`;
-                  horizontalLine.style.width = `${lineEnd - lineStart}%`;
-                }
+                // Draw from marker to the middle (50%) depending on side
+                const lineStart = Math.min(markerPosition, 50);
+                const lineEnd = Math.max(markerPosition, 50);
+                horizontalLine.style.left = `${lineStart}%`;
+                horizontalLine.style.width = `${lineEnd - lineStart}%`;
                 
                 // Create the vertical marker
                 const verticalMarker = document.createElement('div');
                 verticalMarker.style.position = 'absolute';
-                verticalMarker.style.width = '1px';
-                verticalMarker.style.height = '10px';
-                verticalMarker.style.backgroundColor = markerColor; // Use the custom color
-                verticalMarker.style.top = '6px';
+                verticalMarker.style.width = '2px';
+                verticalMarker.style.height = '12px';
+                // Medium gray for visibility without overpowering
+                verticalMarker.style.backgroundColor = '#9CA3AF';
+                verticalMarker.style.top = '5px';
                 verticalMarker.style.left = `${markerPosition}%`;
                 verticalMarker.style.transform = 'translateX(-50%)';
                 verticalMarker.style.zIndex = '50';
@@ -307,6 +298,17 @@ class ClickableTable extends StreamlitComponentBase<State> {
                 // Add lines to container
                 container.appendChild(horizontalLine);
                 container.appendChild(verticalMarker);
+
+                // Flip value text to opposite side of the center relative to marker
+                if (markerPosition <= 50) {
+                  textContainer.style.left = '52%';
+                  textContainer.style.right = 'auto';
+                  textContainer.style.textAlign = 'left';
+                } else {
+                  textContainer.style.right = '52%';
+                  textContainer.style.left = 'auto';
+                  textContainer.style.textAlign = 'right';
+                }
               }
             }
           }
@@ -390,9 +392,10 @@ class ClickableTable extends StreamlitComponentBase<State> {
             // Create the bar element
             bar.style.height = '20px';
             bar.style.float = 'left';
-            bar.style.backgroundColor = '#0000FF'; 
+            bar.style.backgroundColor = 'var(--pos-color)';
             bar.style.width = `${value*scaleFactor}%`;
-            bar.style.opacity = '50%';
+            bar.style.opacity = '60%';
+            bar.style.borderRadius = '9px';
             
           }
           
@@ -446,7 +449,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
           // Add CSS class for proper positioning
           rangeCell.className = 'range-chart-cell';
 
-          // Create the 5-dot range chart
+          // Create the range chart container / axis
           const rangeChart = document.createElement('div');
           rangeChart.style.position = 'relative';
           // rangeChart.style.height = '20px';
@@ -454,20 +457,24 @@ class ClickableTable extends StreamlitComponentBase<State> {
           rangeChart.style.display = 'flex';
           rangeChart.style.justifyContent = 'space-between';
 
-          rangeChart.classList.add('range-line'); // Add the line class for 1px line
+          rangeChart.classList.add('range-line');
 
-          // Helper function to create dots
-          const createDot = (position: number, color: string): HTMLElement => {
-            const dot = document.createElement('div');
-            dot.style.position = 'absolute';
-            dot.style.left = `${position}%`;
-            dot.style.marginTop = '-5px';
-            dot.style.width = '10px';
-            dot.style.height = '10px';
-            dot.style.backgroundColor = color;
-            dot.style.borderRadius = '50%';
-            dot.style.opacity = '70%'
-            return dot;
+          // Helper to add a continuous band (range) between two positions
+          const addBand = (startPct: number, endPct: number, color: string, opacity: number, heightPx: number) => {
+            const left = Math.min(startPct, endPct);
+            const right = Math.max(startPct, endPct);
+            const width = Math.max(right - left, 0.5); // ensure visible
+            const band = document.createElement('div');
+            band.style.position = 'absolute';
+            band.style.left = `${left}%`;
+            band.style.width = `${width}%`;
+            band.style.height = `${heightPx}px`;
+            band.style.top = '0px';
+            band.style.backgroundColor = color;
+            band.style.opacity = String(opacity);
+            band.style.borderRadius = `${heightPx/2}px`;
+            band.style.zIndex = '2';
+            rangeChart.appendChild(band);
           };
 
           // Calculate positions (as percentages) for each dot
@@ -477,12 +484,24 @@ class ClickableTable extends StreamlitComponentBase<State> {
           const shortTermHighPos = this.getLeftPosition(shortTermHigh, longTermLow, longTermHigh);
           const longTermHighPos = this.getLeftPosition(longTermHigh, longTermLow, longTermHigh);
 
-          // Append dots to the chart
-          rangeChart.appendChild(createDot(longTermLowPos, long_term_color)); // Long Term Low (orange)
-          rangeChart.appendChild(createDot(shortTermLowPos, short_term_color)); // Short Term Low (light orange)
-          rangeChart.appendChild(createDot(shortTermHighPos, short_term_color)); // Short Term High (light orange)
-          rangeChart.appendChild(createDot(longTermHighPos, long_term_color)); // Long Term High (orange)
-          rangeChart.appendChild(createDot(currentPos, current_color)); // Current (green)
+          // Bands: grayscale palette (same hue, different emphasis)
+          // long-term = slate (lighter), short-term = slate (darker)
+          addBand(longTermLowPos, longTermHighPos, '#6B7280', 0.15, 18);
+          addBand(shortTermLowPos, shortTermHighPos, '#6B7280', 0.35, 18);
+
+          // Current marker: a small rounded pill centered on the axis
+          const currentMarker = document.createElement('div');
+          currentMarker.style.position = 'absolute';
+          currentMarker.style.left = `${currentPos}%`;
+          currentMarker.style.top = '3px';
+          currentMarker.style.width = '10px';
+          currentMarker.style.height = '12px';
+          currentMarker.style.transform = 'translateX(-50%)';
+          currentMarker.style.backgroundColor = current_color;
+          currentMarker.style.borderRadius = '6px';
+          currentMarker.style.boxShadow = '0 0 0 2px #fff inset, 0 0 0 1px rgba(0,0,0,.12)';
+          currentMarker.style.zIndex = '3';
+          rangeChart.appendChild(currentMarker);
 
           // Check if current is lower than both short term low and long term low
           if (low_text && current < shortTermLow && current < longTermLow) {

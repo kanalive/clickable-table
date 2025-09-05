@@ -2,7 +2,7 @@
 
 A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, and custom text display capabilities.
 
-![Data Bar Chart Example](images/data_bar_chart0.7.7.png)
+![Clickable Table 1.0](images/1.0.png)
 
 ## Features
 
@@ -18,6 +18,8 @@ A powerful, interactive table component for Streamlit with advanced visualizatio
 - Hover tooltips showing actual vs. recommended values
 - Support for both positive and negative values
 
+![Data Bar chart](images/data_bar_chart.png)
+
 ### 🎨 **David Hum Charts**
 - Percentage-based visualizations
 - Exception highlighting for non-numeric values
@@ -26,10 +28,11 @@ A powerful, interactive table component for Streamlit with advanced visualizatio
 ![David Hum Column Chart](images/david_hum_column_chart.png)
 
 ### 📈 **Range Charts**
-- 5-dot range visualization (Long Term High/Low, Short Term High/Low, Current)
-- Customizable colors for each dot type
-- **NEW: Text Display when values are below thresholds**
-- Automatic text replacement when current < both short-term and long-term lows
+- Clean band design for long/short‑term ranges with a current marker
+- Palette options (muted, professional, warm/cool, grayscale) for accessibility
+- Optional text display when current is outside both ranges (below or above)
+
+![Range chart](images/range_chart.png)
 
 ### 🔧 **Advanced Configuration**
 - Column width customization
@@ -230,6 +233,13 @@ To develop locally:
 3. The component will use localhost:3000 for development
 
 ## Version History
+
+### 1.0.0
+- Complete visual refresh: rounded bars, centered axis, softer palette
+- Range chart redesigned to bands + current marker; palette options
+- Recommendation marker clarity: medium‑gray connector and marker, overlap‑aware text
+- Consistent data bars across columns; improved negative/positive styling
+- Docs and screenshots updated
 
 ### 0.0.7.8
 - Range chart text display when values are above thresholds

@@ -10,7 +10,7 @@ except UnicodeDecodeError:
 
 setuptools.setup(
     name="clickable_table",
-    version="0.0.7.8",
+    version="1.0",
     author="Karina Li",
     author_email="karina.w.li@outlook.com",
     description="A clickable table component for Streamlit",

@@ -4,6 +4,10 @@
   --hover-color:red;
   --max-height: 800px;
   --recommended-marker-color: #000000; /* Color for the recommended value marker */
+  --axis-color: #d0d7de;      /* Neutral axis/line color */
+  --track-color: #eef2f6;     /* Light bar track color */
+  --pos-color: #6b8cff;       /* Softer positive bar */
+  --neg-color: #ff6b6b;       /* Softer negative bar */
 }
 
 td, th {
@@ -43,7 +47,23 @@ td:hover {
 
 .data-bar-container {
   position: relative;
-  height: 20px; /* Example height */
+  height: 18px;
+  background: var(--track-color);
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+/* Center axis instead of bar borders */
+.data-bar-container::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  bottom: 2px;
+  width: 1px;
+  background: var(--axis-color);
+  transform: translateX(-0.5px);
+  z-index: 2;
 }
 
 .data-bar {
@@ -51,6 +71,9 @@ td:hover {
   top: 0;
   height: 100%;
   z-index: 1;
+  border: 0;
+  border-radius: 9px;
+  opacity: 0.6;
 }
 
 .data-bar-label {
@@ -61,12 +84,12 @@ td:hover {
 }
 
 .negative {
-  background-color: red;
+  background-color: var(--neg-color);
   right: 50%;
 }
 
 .positive {
-  background-color: blue;
+  background-color: var(--pos-color);
   left: 50%;
 }
 
@@ -82,10 +105,25 @@ td:hover {
 
 .range-line {
   position: relative;
-  height: 1px;            /* This is the line height */
-  background-color: #000; /* Black line for the range */
+  height: 18px;               /* match data bar height */
+  background-color: var(--track-color);
   width: 100%;
-  
+  border-radius: 9px;
+  margin: 6px 2px;
+  overflow: hidden;
+}
+
+/* Center axis for the range track */
+.range-line::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  bottom: 2px;
+  width: 1px;
+  background: var(--axis-color);
+  transform: translateX(-0.5px);
+  z-index: 1;
 }
 
 /* Styles for range chart text overlay */
@@ -100,7 +138,7 @@ td:hover {
 /* Ensure range chart cells have proper positioning for text overlay */
 .range-chart-cell {
   position: relative;
-  /* min-height: 40px; */
+  padding: 6px 0;
 }
 
 /* When only text is displayed, center it vertically */
@@ -112,11 +150,20 @@ td:hover {
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   position: absolute;
-  opacity: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 2px #fff inset, 0 0 0 1px rgba(0,0,0,.12);
+  opacity: 0.9;
+}
+
+/* Slightly larger current marker if used */
+.dot.current {
+  width: 10px;
+  height: 10px;
 }
 
 .hide-column {
