@@ -3,7 +3,8 @@ from clickable_table import clickable_table
 import pandas as pd
 
 st.set_page_config(layout="wide")
-st.subheader("Clickable Table with Enhanced Features")
+st.title("🎯 Clickable Table 1.0 - Enhanced Visualizations")
+st.markdown("**A powerful, interactive table component for Streamlit with advanced visualization features**")
 
 # Sample data
 data = {
@@ -139,34 +140,67 @@ if return_value:
 else:
     st.markdown("Click on a cell to see its details")
 
-# Add explanation of new features
+# Add explanation of new 1.0 features
 st.markdown("""
-### 0.0.7.7 Enhanced Features
+## 🚀 Version 1.0 Features
 
-This table now includes:
+### ✨ **Complete Visual Refresh**
+- **Rounded bars** with consistent styling across all columns
+- **Centered axis** with neutral colors for better readability
+- **Softer palette** with improved contrast and accessibility
+- **Unified design** - all data bars now have the same modern look
 
-1. **Custom Line Colors**: 
-   - The line color is fully customizable for each data bar column
+### 📊 **Enhanced Range Charts**
+- **Band design** instead of scattered dots for clearer range visualization
+- **Current marker** as a pill-shaped indicator
+- **Palette options** (muted, professional, warm/cool, grayscale)
+- **Smart text display** when values are outside expected ranges
 
-2. **Hover Tooltips**:
-   - Hover over any data bar chart cell to see a tooltip
-   - The tooltip shows both the actual and target values
-   - Column names are used in the tooltip for clarity
+### 🎯 **Improved Recommendation Markers**
+- **Medium-gray styling** for better visual balance
+- **Overlap-aware text positioning** - values flip to opposite side when marker is present
+- **Cleaner connectors** from marker to center axis
+- **Enhanced readability** with better contrast
 
-3. **Column-Specific Styling**:
-   - Conditional formatting is only applied to specified columns
-   - In this example, only the Growth column has conditional styling
+### 🔧 **Technical Improvements**
+- **Consistent bar heights** (18px) across all visualizations
+- **Better error handling** and data type consistency
+- **Improved performance** and stability
+- **Accessibility enhancements** with better color contrast
 
-4. **Range Chart Text Display**:
-   - When the current value is below both short-term and long-term lows, custom text can be displayed
-   - Use the 'low_text' parameter in range_chart configuration to specify the message
-   - In this example, "⚠️Below Range" will appear when current < both thresholds
-   - The text completely replaces the range chart (dots and lines) for better visibility
-
-5. **Technical Improvements**:
-   - Fixed deprecated pandas warnings
-   - Enhanced error handling and data type consistency
-   - Improved performance and stability
-
-Try hovering over the Revenue or Margin % columns to see the tooltips in action!
+### 💡 **Try These Features**
+- **Hover** over Revenue or Margin % columns to see tooltips
+- **Click** any cell to see detailed information
+- **Notice** the clean, modern styling throughout
+- **Observe** how text positioning adapts to recommendation markers
 """)
+
+# Add a section showing the different visualization types
+st.markdown("---")
+st.markdown("### 📈 Visualization Types")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("""
+    **Data Bar Charts**
+    - Revenue: Blue/red bars with rounded ends
+    - Margin %: Includes recommendation markers
+    - Hover tooltips show actual vs target
+    """)
+
+with col2:
+    st.markdown("""
+    **David Hum Charts**
+    - Customer/Employee scores
+    - Exception highlighting for text values
+    - Consistent rounded styling
+    """)
+
+with col3:
+    st.markdown("""
+    **Range Charts**
+    - Long/short-term bands
+    - Current value marker
+    - Text display for out-of-range values
+    """)
