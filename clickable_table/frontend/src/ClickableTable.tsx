@@ -132,9 +132,18 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const davidHumColumns = this.props.args.config.david_hum_columns;
     const idxColName = this.props.args.config.idx_col_name;
     const rangeChartColumns = this.props.args.config.range_chart;
+    const fixedScaleRangeCharts = this.props.args.config.fixed_scale_range_chart;
     const barRounded = this.props.args.config.bar_rounded !== false; // Default to true if not specified
 
     const headers = tableContainer.querySelectorAll('th');
+    // Check if index is included BEFORE modifying headers[0]
+    // pandas to_html() includes index as first header and first cell in rows
+    // If row has same number of cells as headers, index is included in both
+    const firstRow = tableContainer.querySelector('tbody tr');
+    const rowCellCount = firstRow ? firstRow.children.length : 0;
+    const headerCount = headers.length;
+    const indexIncluded = rowCellCount === headerCount; // If equal, index is included in both
+    
     if(headers){
       headers[0].textContent = idxColName;
     }
@@ -530,6 +539,171 @@ class ClickableTable extends StreamlitComponentBase<State> {
             rangeCell.textContent = '';
             rangeCell.appendChild(rangeChart);
           }
+        });
+      }
+      if (Array.isArray(fixedScaleRangeCharts)) {
+        fixedScaleRangeCharts.forEach((chartConfig: any) => {
+          const { 
+            col_idx, 
+            min, 
+            max, 
+            dot1_idx, 
+            dot2_idx, 
+            dot3_idx,
+            dot1_color = '#9CA3AF',
+            dot2_color = '#9CA3AF',
+            dot3_color = '#9CA3AF',
+            line_color = '#D1D5DB',
+            line_height = 2,
+            tick_marks = true
+          } = chartConfig;
+
+          // Use the index inclusion detection from above
+          // If index is included, row.children[0] is index, so we need to offset by 1
+          const indexOffset = indexIncluded ? 1 : 0;
+          
+          const actualColIdx = col_idx + indexOffset;
+          const chartCell = row.children[actualColIdx] as HTMLElement;
+          if (!chartCell) return;
+
+          // Verify this is the correct cell (should be empty)
+          const cellContent = chartCell.textContent?.trim() || '';
+          // Only render if cell is empty (allows for empty string placeholders)
+          if (cellContent && cellContent !== '') {
+            // Skip if cell has content (might be wrong column)
+            return;
+          }
+          
+          // Update dot indices to account for index column
+          const dot1ActualIdx = dot1_idx + indexOffset;
+          const dot2ActualIdx = dot2_idx + indexOffset;
+          const dot3ActualIdx = dot3_idx + indexOffset;
+
+          // Add CSS class for proper positioning
+          chartCell.className = 'fixed-scale-range-chart-cell';
+
+          // Create the chart container
+          const chartContainer = document.createElement('div');
+          chartContainer.style.position = 'relative';
+          chartContainer.style.width = '100%';
+          chartContainer.style.height = '30px';
+          chartContainer.style.padding = '5px 0';
+
+          // Calculate range for positioning
+          const range = max - min;
+
+          // Calculate tick marks (7 total: 3 left, midpoint, 3 right)
+          const tickSpacing = range / 6;
+          const ticks: number[] = [];
+          for (let i = 0; i <= 6; i++) {
+            ticks.push(min + i * tickSpacing);
+          }
+
+          // Create tick marks container (if enabled)
+          if (tick_marks) {
+            const tickContainer = document.createElement('div');
+            tickContainer.style.position = 'absolute';
+            tickContainer.style.bottom = '0px';
+            tickContainer.style.width = '100%';
+            tickContainer.style.height = '12px';
+            tickContainer.style.display = 'flex';
+            tickContainer.style.justifyContent = 'space-between';
+            tickContainer.style.padding = '0 2px';
+
+            ticks.forEach((tickValue) => {
+              const tickWrapper = document.createElement('div');
+              tickWrapper.style.position = 'relative';
+              tickWrapper.style.display = 'flex';
+              tickWrapper.style.flexDirection = 'column';
+              tickWrapper.style.alignItems = 'center';
+
+              // Tick mark line
+              const tickLine = document.createElement('div');
+              tickLine.style.width = '1px';
+              tickLine.style.height = '4px';
+              tickLine.style.backgroundColor = '#9CA3AF';
+              tickLine.style.marginBottom = '2px';
+
+              // Tick label
+              const tickLabel = document.createElement('div');
+              tickLabel.style.fontSize = '9px';
+              tickLabel.style.color = '#6B7280';
+              tickLabel.style.textAlign = 'center';
+              tickLabel.textContent = tickValue.toFixed(1);
+
+              tickWrapper.appendChild(tickLine);
+              tickWrapper.appendChild(tickLabel);
+              tickContainer.appendChild(tickWrapper);
+            });
+
+            chartContainer.appendChild(tickContainer);
+          }
+
+          // Create the horizontal line
+          const line = document.createElement('div');
+          line.style.position = 'absolute';
+          line.style.top = '15px';
+          line.style.left = '0';
+          line.style.width = '100%';
+          line.style.height = `${line_height}px`;
+          line.style.backgroundColor = line_color;
+          line.style.borderRadius = barRounded ? `${line_height / 2}px` : '0px';
+          line.style.zIndex = '1';
+          chartContainer.appendChild(line);
+
+          // Create vertical midpoint line (grey, 1px)
+          const midpointLine = document.createElement('div');
+          midpointLine.style.position = 'absolute';
+          midpointLine.style.left = '50%';
+          midpointLine.style.top = '5px';
+          midpointLine.style.width = '1px';
+          midpointLine.style.height = '20px';
+          midpointLine.style.backgroundColor = '#9CA3AF';
+          midpointLine.style.transform = 'translateX(-50%)';
+          midpointLine.style.zIndex = '2';
+          chartContainer.appendChild(midpointLine);
+
+          // Helper function to calculate position percentage (range already calculated above)
+          const getPositionPercent = (value: number): number => {
+            if (value < min) return 0;
+            if (value > max) return 100;
+            return ((value - min) / range) * 100;
+          };
+
+          // Get dot values from specified columns (using adjusted indices)
+          const dot1Value = parseFloat(row.children[dot1ActualIdx]?.textContent || '0');
+          const dot2Value = parseFloat(row.children[dot2ActualIdx]?.textContent || '0');
+          const dot3Value = parseFloat(row.children[dot3ActualIdx]?.textContent || '0');
+
+          // Create dots
+          const dots = [
+            { value: dot1Value, color: dot1_color },
+            { value: dot2Value, color: dot2_color },
+            { value: dot3Value, color: dot3_color }
+          ];
+
+          dots.forEach((dot) => {
+            if (isNaN(dot.value)) return; // Skip if value is not a number
+
+            const dotPosition = getPositionPercent(dot.value);
+            const dotElement = document.createElement('div');
+            dotElement.style.position = 'absolute';
+            dotElement.style.left = `${dotPosition}%`;
+            dotElement.style.top = '9px';
+            dotElement.style.width = '10px';
+            dotElement.style.height = '12px';
+            dotElement.style.transform = 'translateX(-50%)';
+            dotElement.style.backgroundColor = dot.color;
+            dotElement.style.opacity = '0.5'; // 50% transparency for overlapping visibility
+            dotElement.style.borderRadius = barRounded ? '6px' : '0px';
+            // No border/shadow for cleaner look
+            dotElement.style.zIndex = '3';
+            chartContainer.appendChild(dotElement);
+          });
+
+          // Clear cell and append chart
+          chartCell.textContent = '';
+          chartCell.appendChild(chartContainer);
         });
       }
 

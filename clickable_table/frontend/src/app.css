@@ -169,3 +169,10 @@ td:hover {
 .hide-column {
   display: none;
 }
+
+/* Fixed-scale range chart styles */
+.fixed-scale-range-chart-cell {
+  position: relative;
+  padding: 6px 0;
+  min-height: 30px;
+}

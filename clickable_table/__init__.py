@@ -5,7 +5,7 @@ import pandas as pd
 
 # Create a _RELEASE constant. We'll set this to False while we're developing
 # the component, and True when we're ready to package and distribute it.
-_RELEASE = False
+_RELEASE = True
 
 # Declare a Streamlit component. `declare_component` returns a function
 # that is used to create instances of the component.
@@ -20,7 +20,7 @@ else:
     _component_func = components.declare_component("clickable_table", path=build_dir)
 
 def clickable_table(df=None, styling_function=None, data_bar_columns=None, david_hum_columns=None, 
-                   range_chart=None, idx_col_name=None, column_width=None, max_height="800px", 
+                   range_chart=None, fixed_scale_range_chart=None, idx_col_name=None, column_width=None, max_height="800px", 
                    hidden_column_class="hide-column", hidden_columns=None, bar_rounded=True, key=None):
     """
     Create a clickable table component with advanced visualization options.
@@ -42,6 +42,23 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
                  {'col_idx': 4, 'min': 0, 'max': 100, 'exception_col_color': "lightblue"}]
     range_chart : list of dict, optional
         List of range chart configurations
+    fixed_scale_range_chart : list of dict, optional
+        List of fixed-scale range chart configurations. Each chart uses a fixed min/max scale
+        across all rows with auto-generated tick marks and displays 3 dots per row.
+        Example: [{
+            'col_idx': 10,              # Column index where chart will be rendered
+            'min': -1.5,                 # Fixed minimum value for entire table
+            'max': 1.5,                  # Fixed maximum value for entire table
+            'dot1_idx': 5,               # Column index for first dot
+            'dot2_idx': 6,               # Column index for second dot
+            'dot3_idx': 7,               # Column index for third dot
+            'dot1_color': '#FF0000',     # Color for first dot (optional, default: '#9CA3AF')
+            'dot2_color': '#00FF00',     # Color for second dot (optional, default: '#9CA3AF')
+            'dot3_color': '#0000FF',     # Color for third dot (optional, default: '#9CA3AF')
+            'line_color': '#D1D5DB',     # Color for the grey line (optional, default: '#D1D5DB')
+            'line_height': 2,            # Height of line in pixels (optional, default: 2)
+            'tick_marks': True           # Show tick marks (optional, default: True)
+        }]
     idx_col_name : str, optional
         Name to display for the index column
     column_width : list of str, optional
@@ -89,6 +106,7 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
         'idx_col_name': idx_col_name or df.index.name or "",
         'column_width': column_width or [],
         'range_chart': range_chart or [],
+        'fixed_scale_range_chart': fixed_scale_range_chart or [],
         'hidden_column_class': hidden_column_class,
         'hidden_columns': hidden_columns or [],
         'bar_rounded': bar_rounded
@@ -123,7 +141,11 @@ if not _RELEASE:
         'Short Term High': [1.176, 1.371, 1.010, 1.153, 0.889, 0.986],  
         'Short Term Low': [0.871, 1.357, 0.876, 1.043, 0.858, 0.601],  
         'Current': [0.1, 1.365, 0.997, 1.110, 0.863, 0.709],
-        'Range Chart': ["", "", "", "", "", ""]  
+        'Range Chart': ["", "", "", "", "", ""],
+        'Dot1': [-0.5, 0.8, 0.2, 0.5, -0.3, 0.1],  # Values for first dot
+        'Dot2': [0.3, 1.2, 0.5, 0.8, 0.0, 0.4],   # Values for second dot
+        'Dot3': [-1.2, 0.5, -0.8, 0.2, -0.5, -0.2], # Values for third dot
+        'Fixed Scale Chart': ["", "", "", "", "", ""]  # Fixed-scale range chart column
     }
 
     def style_dataframe(df):
@@ -191,13 +213,37 @@ if not _RELEASE:
         }
     ]
     
+    # Fixed-scale range chart example
+    # After set_index("Epoch"), column indices are 0-based:
+    # 0: C 1, 1: C 2, 2: C 3, 3: C 3 Recommended, 4: C 4, 5: C 5,
+    # 6: Long Term High, 7: Long Term Low, 8: Short Term High, 9: Short Term Low,
+    # 10: Current, 11: Range Chart, 12: Dot1, 13: Dot2, 14: Dot3, 15: Fixed Scale Chart
+    # Wait, user says current_idx is 11, Range Chart is 12, so:
+    # 11: Current, 12: Range Chart, 13: Dot1, 14: Dot2, 15: Dot3, 16: Fixed Scale Chart
+    fixed_scale_range_chart = [
+        {
+            'col_idx': 16,              # Fixed Scale Chart column (index 16 after setting Epoch as index)
+            'min': -1.5,                 # Fixed minimum for entire table
+            'max': 1.5,                  # Fixed maximum for entire table
+            'dot1_idx': 13,              # Dot1 column index (13, after Range Chart at 12)
+            'dot2_idx': 14,              # Dot2 column index (14)
+            'dot3_idx': 15,              # Dot3 column index (15)
+            'dot1_color': '#EF4444',     # Red for first dot
+            'dot2_color': '#6B7280',     # Darker grey for second dot
+            'dot3_color': '#D1D5DB',     # Lighter grey for third dot
+            'line_color': '#D1D5DB',     # Grey line
+            'line_height': 2,
+            'tick_marks': True
+        }
+    ]
+    
     column_width = [
         '100px','200px', '120px', '200px', '10px', '200px', '200px',
-        '10px', '10px', '10px', '100px', '150px'
+        '10px', '10px', '10px', '100px', '150px', '150px', '100px', '100px', '100px', '200px'
     ]
     
     # Columns to be hidden
-    hidden_columns = [4,7, 8, 9, 10]  # Long/Short Term High/Low columns
+    hidden_columns = [4, 7, 8, 9, 10, 13, 14, 15]  # Long/Short Term High/Low columns and dot value columns
     
     # The CSS for hiding columns is defined in app.css (.hide-column { display: none !important; })
     # No need to add additional CSS in Streamlit
@@ -208,12 +254,13 @@ if not _RELEASE:
         data_bar_columns=data_bar_columns,
         david_hum_columns=david_hum_columns,
         range_chart=range_chart,
+        fixed_scale_range_chart=fixed_scale_range_chart,
         idx_col_name='Tenor Bucket',
         column_width=column_width,
         hidden_column_class="hide-column",
         hidden_columns=hidden_columns,
         max_height="300px",
-        bar_rounded=False,  # Set to False for square edges on all bars
+        bar_rounded=True,  # Set to False for square edges on all bars
         key="test"
     )
     

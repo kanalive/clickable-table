@@ -12,8 +12,8 @@ clickable_table.egg-info/top_level.txt
 clickable_table/frontend/build/asset-manifest.json
 clickable_table/frontend/build/bootstrap.min.css
 clickable_table/frontend/build/index.html
-clickable_table/frontend/build/static/css/main.6c09699e.css
-clickable_table/frontend/build/static/css/main.6c09699e.css.map
-clickable_table/frontend/build/static/js/main.bc09e8d0.js
-clickable_table/frontend/build/static/js/main.bc09e8d0.js.LICENSE.txt
-clickable_table/frontend/build/static/js/main.bc09e8d0.js.map
+clickable_table/frontend/build/static/css/main.f9364d56.css
+clickable_table/frontend/build/static/css/main.f9364d56.css.map
+clickable_table/frontend/build/static/js/main.29b748b4.js
+clickable_table/frontend/build/static/js/main.29b748b4.js.LICENSE.txt
+clickable_table/frontend/build/static/js/main.29b748b4.js.map

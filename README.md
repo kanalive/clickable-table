@@ -1,6 +1,6 @@
 # Clickable Table - Streamlit Custom Component
 
-A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, and custom text display capabilities.
+A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, fixed-scale range charts, and custom text display capabilities.
 
 ![Clickable Table 1.0](images/1.0.png)
 
@@ -33,6 +33,13 @@ A powerful, interactive table component for Streamlit with advanced visualizatio
 - Optional text display when current is outside both ranges (below or above)
 
 ![Range chart](images/range_chart.png)
+
+### 📊 **Fixed-Scale Range Charts** (New!)
+- Fixed min/max scale across all rows for consistent comparison
+- Auto-generated tick marks (7 ticks: 3 left, midpoint, 3 right)
+- Three customizable dots per row with individual colors
+- Midpoint reference line for easy visualization
+- Perfect for comparing values across rows on the same scale
 
 ### 🔧 **Advanced Configuration**
 - Column width customization
@@ -139,6 +146,33 @@ clickable_table(
 )
 ```
 
+### Fixed-Scale Range Charts
+
+```python
+fixed_scale_range_chart = [
+    {
+        'col_idx': 16,              # Column index where chart will be rendered
+        'min': -1.5,                 # Fixed minimum value for entire table
+        'max': 1.5,                  # Fixed maximum value for entire table
+        'dot1_idx': 13,              # Column index for first dot
+        'dot2_idx': 14,              # Column index for second dot
+        'dot3_idx': 15,              # Column index for third dot
+        'dot1_color': '#EF4444',     # Color for first dot (optional, default: '#9CA3AF')
+        'dot2_color': '#6B7280',     # Color for second dot (optional, default: '#9CA3AF')
+        'dot3_color': '#D1D5DB',     # Color for third dot (optional, default: '#9CA3AF')
+        'line_color': '#D1D5DB',     # Color for the grey line (optional, default: '#D1D5DB')
+        'line_height': 2,            # Height of line in pixels (optional, default: 2)
+        'tick_marks': True           # Show tick marks (optional, default: True)
+    }
+]
+
+clickable_table(
+    df=df,
+    fixed_scale_range_chart=fixed_scale_range_chart,
+    key="fixed_scale_example"
+)
+```
+
 ### Column Customization
 
 ```python
@@ -148,11 +182,15 @@ column_width = ['100px', '150px', '200px']
 # Hide specific columns
 hidden_columns = [2, 4]  # Column indices to hide
 
+# Rounded or square bar edges
+bar_rounded = True  # True for rounded edges, False for square edges
+
 clickable_table(
     df=df,
     column_width=column_width,
     hidden_columns=hidden_columns,
     hidden_column_class="hide-column",
+    bar_rounded=bar_rounded,
     key="custom_example"
 )
 ```
@@ -166,11 +204,13 @@ clickable_table(
 | `data_bar_columns` | list | List of data bar chart configurations |
 | `david_hum_columns` | list | List of David Hum chart configurations |
 | `range_chart` | list | List of range chart configurations |
+| `fixed_scale_range_chart` | list | List of fixed-scale range chart configurations |
 | `idx_col_name` | str | Custom name for the index column |
 | `column_width` | list | List of column width values |
 | `max_height` | str | Maximum height of the table container |
 | `hidden_column_class` | str | CSS class for hidden columns |
 | `hidden_columns` | list | List of column indices to hide |
+| `bar_rounded` | bool | Whether to use rounded edges for all bars (default: True) |
 | `key` | str | Unique key for the component instance |
 
 ## Range Chart Text Display
@@ -218,7 +258,26 @@ The component includes built-in CSS classes that you can customize:
 
 - `.range-chart-text`: Styles for the range chart warning text
 - `.range-chart-cell`: Ensures proper positioning for range chart elements
+- `.fixed-scale-range-chart-cell`: Styles for fixed-scale range chart cells
 - `.hide-column`: Hides columns when applied
+
+### Bar Edge Styling
+
+You can control whether bars have rounded or square edges using the `bar_rounded` parameter:
+
+```python
+# Rounded edges (default)
+clickable_table(df=df, bar_rounded=True, key="example")
+
+# Square edges
+clickable_table(df=df, bar_rounded=False, key="example")
+```
+
+This affects:
+- Data bar charts
+- David Hum charts
+- Range chart bands and markers
+- Fixed-scale range chart dots and line
 
 ## Examples
 
@@ -239,6 +298,10 @@ To develop locally:
 - Range chart redesigned to bands + current marker; palette options
 - Recommendation marker clarity: medium‑gray connector and marker, overlap‑aware text
 - Consistent data bars across columns; improved negative/positive styling
+- ✨ **NEW**: Fixed-scale range charts with auto-generated tick marks
+- ✨ **NEW**: Configurable bar edge styling (rounded/square) via `bar_rounded` parameter
+- ✨ **NEW**: Midpoint reference line in fixed-scale range charts
+- ✨ **NEW**: Three customizable dots per row in fixed-scale range charts
 - Docs and screenshots updated
 
 ### 0.0.7.8

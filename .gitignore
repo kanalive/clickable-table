@@ -10,3 +10,9 @@ build/lib/clickable_table/frontend/build/asset-manifest.json
 build/lib/clickable_table/frontend/build/index.html
 clickable_table/frontend/build/asset-manifest.json
 clickable_table/frontend/build/index.html
+build/lib/clickable_table/__init__.py
+build/lib/clickable_table/example.py
+build/lib/clickable_table/frontend/build/asset-manifest.json
+build/lib/clickable_table/frontend/build/index.html
+clickable_table/frontend/build/asset-manifest.json
+clickable_table/frontend/build/index.html
