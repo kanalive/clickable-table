@@ -2,7 +2,7 @@
 
 A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, fixed-scale range charts, and custom text display capabilities.
 
-![Clickable Table 1.0](images/1.0.png)
+![Clickable Table 1.0](images/1.1.png)
 
 ## Features
 
