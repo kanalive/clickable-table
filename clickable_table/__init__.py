@@ -5,7 +5,7 @@ import pandas as pd
 
 # Create a _RELEASE constant. We'll set this to False while we're developing
 # the component, and True when we're ready to package and distribute it.
-_RELEASE = True
+_RELEASE = False
 
 # Declare a Streamlit component. `declare_component` returns a function
 # that is used to create instances of the component.
@@ -21,7 +21,7 @@ else:
 
 def clickable_table(df=None, styling_function=None, data_bar_columns=None, david_hum_columns=None, 
                    range_chart=None, idx_col_name=None, column_width=None, max_height="800px", 
-                   hidden_column_class="hide-column", hidden_columns=None, key=None):
+                   hidden_column_class="hide-column", hidden_columns=None, bar_rounded=True, key=None):
     """
     Create a clickable table component with advanced visualization options.
     
@@ -54,6 +54,9 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
     hidden_columns : list of int, optional
         List of column indices to add the hidden class to (e.g. [5, 6, 7])
         Note: These columns will be hidden using CSS display:none
+    bar_rounded : bool, optional
+        Whether to use rounded edges for all bars (data bars, David Hum charts, and range charts)
+        Default is True (rounded edges). Set to False for square edges.
     key : str, optional
         Key for the component instance
         
@@ -87,7 +90,8 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
         'column_width': column_width or [],
         'range_chart': range_chart or [],
         'hidden_column_class': hidden_column_class,
-        'hidden_columns': hidden_columns or []
+        'hidden_columns': hidden_columns or [],
+        'bar_rounded': bar_rounded
     }
     
     # Call the component function
@@ -209,6 +213,7 @@ if not _RELEASE:
         hidden_column_class="hide-column",
         hidden_columns=hidden_columns,
         max_height="300px",
+        bar_rounded=False,  # Set to False for square edges on all bars
         key="test"
     )
     

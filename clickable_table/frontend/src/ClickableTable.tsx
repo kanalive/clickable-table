@@ -132,6 +132,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const davidHumColumns = this.props.args.config.david_hum_columns;
     const idxColName = this.props.args.config.idx_col_name;
     const rangeChartColumns = this.props.args.config.range_chart;
+    const barRounded = this.props.args.config.bar_rounded !== false; // Default to true if not specified
 
     const headers = tableContainer.querySelectorAll('th');
     if(headers){
@@ -232,7 +233,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
             textContainer.style.textAlign = 'left';
           }
           bar.style.opacity = '60%';
-          bar.style.borderRadius = '9px';
+          bar.style.borderRadius = barRounded ? '9px' : '0px';
 
           // Append elements to container
           container.appendChild(bar);
@@ -395,7 +396,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
             bar.style.backgroundColor = 'var(--pos-color)';
             bar.style.width = `${value*scaleFactor}%`;
             bar.style.opacity = '60%';
-            bar.style.borderRadius = '9px';
+            bar.style.borderRadius = barRounded ? '9px' : '0px';
             
           }
           
@@ -458,6 +459,8 @@ class ClickableTable extends StreamlitComponentBase<State> {
           rangeChart.style.justifyContent = 'space-between';
 
           rangeChart.classList.add('range-line');
+          // Override CSS border-radius based on bar_rounded setting
+          rangeChart.style.borderRadius = barRounded ? '9px' : '0px';
 
           // Helper to add a continuous band (range) between two positions
           const addBand = (startPct: number, endPct: number, color: string, opacity: number, heightPx: number) => {
@@ -472,7 +475,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
             band.style.top = '0px';
             band.style.backgroundColor = color;
             band.style.opacity = String(opacity);
-            band.style.borderRadius = `${heightPx/2}px`;
+            band.style.borderRadius = barRounded ? `${heightPx/2}px` : '0px';
             band.style.zIndex = '2';
             rangeChart.appendChild(band);
           };
@@ -498,7 +501,7 @@ class ClickableTable extends StreamlitComponentBase<State> {
           currentMarker.style.height = '12px';
           currentMarker.style.transform = 'translateX(-50%)';
           currentMarker.style.backgroundColor = current_color;
-          currentMarker.style.borderRadius = '6px';
+          currentMarker.style.borderRadius = barRounded ? '6px' : '0px';
           currentMarker.style.boxShadow = '0 0 0 2px #fff inset, 0 0 0 1px rgba(0,0,0,.12)';
           currentMarker.style.zIndex = '3';
           rangeChart.appendChild(currentMarker);
