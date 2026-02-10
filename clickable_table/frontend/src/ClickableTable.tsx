@@ -920,8 +920,15 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
     const thead = table.querySelector('thead');
     const tbody = table.querySelector('tbody');
+    const theadRows = thead ? thead.querySelectorAll('tr') : null;
+    const isMultiLevel = theadRows && theadRows.length > 1;
 
-    // Handle body rows - simple nth-child approach (1:1 column mapping)
+    // For multi-level headers, use zero-width hiding to keep cells in the table
+    // grid so that colspan alignment in upper header rows works correctly.
+    // For single-level headers, use display:none (the original behavior).
+    const hideClass = isMultiLevel ? 'hide-column-zero-width' : hiddenClass;
+
+    // Handle body rows
     if (tbody) {
       const bodyRows = tbody.querySelectorAll('tr');
       bodyRows.forEach(row => {
@@ -929,29 +936,31 @@ class ClickableTable extends StreamlitComponentBase<State> {
           const cssColIdx = colIdx + 1;
           const cell = row.querySelector(`th:nth-child(${cssColIdx}), td:nth-child(${cssColIdx})`);
           if (cell) {
-            cell.classList.add(hiddenClass);
+            cell.classList.add(hideClass);
           }
         });
       });
     }
 
     // Handle header rows
-    if (thead) {
-      const headerRows = thead.querySelectorAll('tr');
-      const lastHeaderRowIdx = headerRows.length - 1;
+    if (theadRows) {
+      const lastHeaderRowIdx = theadRows.length - 1;
 
-      headerRows.forEach((row, rowIdx) => {
+      theadRows.forEach((row, rowIdx) => {
         if (rowIdx === lastHeaderRowIdx) {
-          // Last header row has 1:1 column mapping - same logic as body rows
+          // Last header row has 1:1 column mapping - hide cells directly
           hiddenColumns.forEach((colIdx: number) => {
             const cssColIdx = colIdx + 1;
             const cell = row.querySelector(`th:nth-child(${cssColIdx})`);
             if (cell) {
-              cell.classList.add(hiddenClass);
+              cell.classList.add(hideClass);
             }
           });
-        } else {
-          // Upper header rows may have colspan - adjust accordingly
+        } else if (isMultiLevel) {
+          // Upper header rows with colspan: DON'T adjust colspan.
+          // The zero-width hidden cells in the bottom row keep them in the grid,
+          // so colspans naturally span the correct positions.
+          // Only hide a group header entirely if ALL its sub-columns are hidden.
           const cells = row.querySelectorAll('th');
           let visualCol = 0;
           cells.forEach(cell => {
@@ -964,16 +973,15 @@ class ClickableTable extends StreamlitComponentBase<State> {
             const hiddenCount = spannedCols.filter(c => hiddenColumns.includes(c)).length;
 
             if (hiddenCount === colspan) {
-              // All columns under this group header are hidden
-              cell.classList.add(hiddenClass);
-            } else if (hiddenCount > 0 && colspan > 1) {
-              // Some columns under this group header are hidden - reduce colspan
-              cell.setAttribute('colspan', String(colspan - hiddenCount));
+              // All columns under this group header are hidden - hide the group too
+              cell.classList.add(hideClass);
             }
 
             visualCol += colspan;
           });
         }
+        // For single-level headers (only 1 header row), it's handled as the
+        // lastHeaderRowIdx case above.
       });
     }
   }
