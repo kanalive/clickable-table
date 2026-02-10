@@ -4,6 +4,8 @@ README.md
 setup.py
 clickable_table/__init__.py
 clickable_table/example.py
+clickable_table/example_multi_index.py
+clickable_table/example_single_index.py
 clickable_table.egg-info/PKG-INFO
 clickable_table.egg-info/SOURCES.txt
 clickable_table.egg-info/dependency_links.txt
@@ -14,6 +16,6 @@ clickable_table/frontend/build/bootstrap.min.css
 clickable_table/frontend/build/index.html
 clickable_table/frontend/build/static/css/main.f9364d56.css
 clickable_table/frontend/build/static/css/main.f9364d56.css.map
-clickable_table/frontend/build/static/js/main.c6870a99.js
-clickable_table/frontend/build/static/js/main.c6870a99.js.LICENSE.txt
-clickable_table/frontend/build/static/js/main.c6870a99.js.map
+clickable_table/frontend/build/static/js/main.d722aae5.js
+clickable_table/frontend/build/static/js/main.d722aae5.js.LICENSE.txt
+clickable_table/frontend/build/static/js/main.d722aae5.js.map
