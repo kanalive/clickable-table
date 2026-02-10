@@ -99,6 +99,26 @@ class ClickableTable extends StreamlitComponentBase<State> {
     });
   }
 
+  /**
+   * Returns the <th> elements from the last row of <thead>.
+   * For single-level headers, this is the only header row.
+   * For multi-level (MultiIndex) headers, this is the bottom-level row
+   * which has a 1:1 mapping to data columns.
+   */
+  private getBottomHeaderRow(tableContainer: Element): {
+    headers: NodeListOf<Element>;
+    theadRows: NodeListOf<Element> | null;
+  } {
+    const thead = tableContainer.querySelector('thead');
+    const theadRows = thead ? thead.querySelectorAll('tr') : null;
+    if (theadRows && theadRows.length > 0) {
+      const lastRow = theadRows[theadRows.length - 1];
+      return { headers: lastRow.querySelectorAll('th'), theadRows };
+    }
+    // Fallback for tables without <thead>
+    return { headers: tableContainer.querySelectorAll('th'), theadRows: null };
+  }
+
   private getLeftPosition(value: number, min: number, max: number): number {
     return ((value - min) / (max - min)) * 98;
   }
@@ -797,13 +817,30 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const fixedScaleRangeCharts = this.props.args.config.fixed_scale_range_chart;
     const barRounded = this.props.args.config.bar_rounded !== false;
 
-    const headers = tableContainer.querySelectorAll('th');
+    // Get bottom-level headers (last row of <thead>) for column mapping
+    const { headers, theadRows } = this.getBottomHeaderRow(tableContainer);
     const firstRow = tableContainer.querySelector('tbody tr');
     const rowCellCount = firstRow ? firstRow.children.length : 0;
     const headerCount = headers.length;
     const indexIncluded = rowCellCount === headerCount;
 
-    if (headers) {
+    // Set idx_col_name on the first <th> of the first header row
+    if (theadRows && theadRows.length > 0) {
+      const firstTh = theadRows[0].querySelector('th');
+      if (firstTh) {
+        firstTh.textContent = idxColName;
+      }
+      // For multi-level headers, also set on subsequent header rows' index cell
+      // to keep them consistent (they're typically empty spacers)
+      if (theadRows.length > 1) {
+        for (let i = 1; i < theadRows.length; i++) {
+          const th = theadRows[i].querySelector('th');
+          if (th && (!th.textContent || th.textContent.trim() === '')) {
+            th.textContent = '';  // Keep lower-level index cells empty
+          }
+        }
+      }
+    } else if (headers && headers[0]) {
       headers[0].textContent = idxColName;
     }
 
@@ -824,7 +861,17 @@ class ClickableTable extends StreamlitComponentBase<State> {
     if (target.tagName === "TD" || target.tagName === "TH") {
       const cell = target as HTMLTableCellElement;
       const cellValue = cell.innerText;
-      const headerElement = cell.closest("table")?.querySelector(`th:nth-child(${cell.cellIndex + 1})`);
+
+      // For multi-level headers, get the column name from the last (bottom-level) header row
+      const table = cell.closest("table");
+      const thead = table?.querySelector('thead');
+      const theadRows = thead ? thead.querySelectorAll('tr') : null;
+      const lastHeaderRow = theadRows && theadRows.length > 0
+        ? theadRows[theadRows.length - 1]
+        : null;
+      const headerElement = lastHeaderRow
+        ? lastHeaderRow.querySelector(`th:nth-child(${cell.cellIndex + 1})`)
+        : table?.querySelector(`th:nth-child(${cell.cellIndex + 1})`);
 
       if (headerElement instanceof HTMLElement) {
         const header = headerElement.innerText;
@@ -832,7 +879,9 @@ class ClickableTable extends StreamlitComponentBase<State> {
 
         if (rowElement && rowElement.tagName === "TR") {
           const tableRow = rowElement as HTMLTableRowElement;
-          const rowIndex = tableRow.rowIndex - 1;
+          // For multi-level headers, subtract the number of header rows instead of just 1
+          const headerRowCount = theadRows ? theadRows.length : 1;
+          const rowIndex = tableRow.rowIndex - headerRowCount;
           const key = this.props.args["key"];
           this.setState({ key, cellValue, header, rowIndex }, () => {
             Streamlit.setComponentValue({key, cellValue, header, rowIndex });
@@ -849,17 +898,19 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const tableContainer = document.querySelector('.clickabletable-container');
     if (!tableContainer) return;
 
-    const headers = tableContainer.querySelectorAll('th');
+    // Apply widths to the bottom-level header row (1:1 mapping with data columns)
+    const { headers } = this.getBottomHeaderRow(tableContainer);
     if (headers) {
       for (let i = 0; i < headers.length; i++) {
-        headers[i].style.width = this.props.args.config.column_width[i];
+        (headers[i] as HTMLElement).style.width = this.props.args.config.column_width[i];
       }
     }
   }
 
   private applyHiddenColumnClasses = (): void => {
-    if (!this.props.args.config.hidden_columns || !this.props.args.config.hidden_column_class) return;
-    if (this.props.args.config.hidden_columns.length <= 0) return;
+    const hiddenColumns: number[] = this.props.args.config.hidden_columns;
+    const hiddenClass: string = this.props.args.config.hidden_column_class;
+    if (!hiddenColumns || !hiddenClass || hiddenColumns.length <= 0) return;
 
     const tableContainer = document.querySelector('.clickabletable-container');
     if (!tableContainer) return;
@@ -867,18 +918,64 @@ class ClickableTable extends StreamlitComponentBase<State> {
     const table = tableContainer.querySelector('table');
     if (!table) return;
 
-    const allRows = table.querySelectorAll('tr');
+    const thead = table.querySelector('thead');
+    const tbody = table.querySelector('tbody');
 
-    allRows.forEach(row => {
-      this.props.args.config.hidden_columns.forEach((colIdx: number) => {
-        const cssColIdx = colIdx + 1;
-        const cell = row.querySelector(`th:nth-child(${cssColIdx}), td:nth-child(${cssColIdx})`);
+    // Handle body rows - simple nth-child approach (1:1 column mapping)
+    if (tbody) {
+      const bodyRows = tbody.querySelectorAll('tr');
+      bodyRows.forEach(row => {
+        hiddenColumns.forEach((colIdx: number) => {
+          const cssColIdx = colIdx + 1;
+          const cell = row.querySelector(`th:nth-child(${cssColIdx}), td:nth-child(${cssColIdx})`);
+          if (cell) {
+            cell.classList.add(hiddenClass);
+          }
+        });
+      });
+    }
 
-        if (cell) {
-          cell.classList.add(this.props.args.config.hidden_column_class);
+    // Handle header rows
+    if (thead) {
+      const headerRows = thead.querySelectorAll('tr');
+      const lastHeaderRowIdx = headerRows.length - 1;
+
+      headerRows.forEach((row, rowIdx) => {
+        if (rowIdx === lastHeaderRowIdx) {
+          // Last header row has 1:1 column mapping - same logic as body rows
+          hiddenColumns.forEach((colIdx: number) => {
+            const cssColIdx = colIdx + 1;
+            const cell = row.querySelector(`th:nth-child(${cssColIdx})`);
+            if (cell) {
+              cell.classList.add(hiddenClass);
+            }
+          });
+        } else {
+          // Upper header rows may have colspan - adjust accordingly
+          const cells = row.querySelectorAll('th');
+          let visualCol = 0;
+          cells.forEach(cell => {
+            const colspan = parseInt(cell.getAttribute('colspan') || '1', 10);
+            const spannedCols: number[] = [];
+            for (let i = 0; i < colspan; i++) {
+              spannedCols.push(visualCol + i);
+            }
+
+            const hiddenCount = spannedCols.filter(c => hiddenColumns.includes(c)).length;
+
+            if (hiddenCount === colspan) {
+              // All columns under this group header are hidden
+              cell.classList.add(hiddenClass);
+            } else if (hiddenCount > 0 && colspan > 1) {
+              // Some columns under this group header are hidden - reduce colspan
+              cell.setAttribute('colspan', String(colspan - hiddenCount));
+            }
+
+            visualCol += colspan;
+          });
         }
       });
-    });
+    }
   }
 
   public render = (): ReactNode => {
