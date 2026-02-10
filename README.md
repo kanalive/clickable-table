@@ -1,6 +1,6 @@
 # Clickable Table - Streamlit Custom Component
 
-A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, fixed-scale range charts, and custom text display capabilities.
+A powerful, interactive table component for Streamlit with advanced visualization features including data bar charts, David Hum charts, range charts, fixed-scale range charts, and custom text display capabilities. Supports both single-level and multi-level (`pd.MultiIndex`) column headers.
 
 ![Clickable Table 1.0](images/1.1.png)
 
@@ -10,6 +10,7 @@ A powerful, interactive table component for Streamlit with advanced visualizatio
 - Clickable cells with return values
 - Custom styling support
 - Responsive design with configurable heights
+- **Multi-level column headers** via `pd.MultiIndex` (fully backward compatible with single-level headers)
 
 ### 📊 **Data Bar Charts**
 - Visual representation of numeric values
@@ -78,6 +79,39 @@ return_value = clickable_table(
 if return_value:
     st.json(return_value)
 ```
+
+### Multi-Level Column Headers
+
+The component supports `pd.MultiIndex` columns out of the box. Group headers automatically span their sub-columns, and all visualization features (data bars, charts, hidden columns, click handling) work identically.
+
+```python
+import pandas as pd
+
+# Create a DataFrame with multi-level column headers
+columns = pd.MultiIndex.from_tuples([
+    ('Revenue', 'Actual'),
+    ('Revenue', '% Change'),
+    ('Margin', 'Value'),
+    ('Margin', 'Target'),
+])
+
+df = pd.DataFrame(
+    [[1000, 5.2, 0.35, 0.40],
+     [1200, 8.1, 0.38, 0.42]],
+    index=['Q1', 'Q2'],
+    columns=columns,
+)
+
+return_value = clickable_table(
+    df=df,
+    idx_col_name='Quarter',
+    key="multi_index_example"
+)
+```
+
+Column indices (`col_idx`, `recommended_idx`, etc.) work the same way as single-level headers — they reference the position in the bottom-level header row, including the index column at position 0.
+
+See `example_single_index.py` and `example_multi_index.py` for full working examples with all chart types.
 
 ## Advanced Usage
 
@@ -281,7 +315,9 @@ This affects:
 
 ## Examples
 
-Check out the `example.py` file for comprehensive examples of all features.
+- `example.py` — comprehensive demo of all features (single-level headers)
+- `example_single_index.py` — single-level column headers with all chart types
+- `example_multi_index.py` — `pd.MultiIndex` column headers with all chart types
 
 ## Development
 
@@ -292,6 +328,12 @@ To develop locally:
 3. The component will use localhost:3000 for development
 
 ## Version History
+
+### 1.3.0
+- ✨ **NEW**: Multi-level column headers via `pd.MultiIndex` — group headers with `colspan` properly span their sub-columns
+- All features (data bars, David Hum, range charts, fixed-scale charts, hidden columns, click handling) work with both single-level and multi-level headers
+- Zero-width column hiding for multi-level headers ensures correct grid alignment
+- Added `example_single_index.py` and `example_multi_index.py`
 
 ### 1.0.0
 - Complete visual refresh: rounded bars, centered axis, softer palette
