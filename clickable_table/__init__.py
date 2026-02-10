@@ -99,11 +99,20 @@ def clickable_table(df=None, styling_function=None, data_bar_columns=None, david
         # Generate HTML from unstyled dataframe
         html = df.to_html()
     
+    # Resolve idx_col_name: handle MultiIndex row index where name could be a tuple
+    resolved_idx_col_name = idx_col_name
+    if resolved_idx_col_name is None:
+        index_name = df.index.name
+        if index_name is not None:
+            resolved_idx_col_name = str(index_name)
+        else:
+            resolved_idx_col_name = ""
+
     # Build the configuration object
     config = {
         'data_bar_chart_columns': data_bar_columns or [],
         'david_hum_columns': david_hum_columns or [],
-        'idx_col_name': idx_col_name or df.index.name or "",
+        'idx_col_name': resolved_idx_col_name,
         'column_width': column_width or [],
         'range_chart': range_chart or [],
         'fixed_scale_range_chart': fixed_scale_range_chart or [],

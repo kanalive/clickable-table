@@ -170,6 +170,20 @@ td:hover {
   display: none;
 }
 
+/* Zero-width hiding: keeps cells in the table grid (for colspan alignment)
+   but makes them invisible and zero-width */
+.hide-column-zero-width {
+  visibility: hidden !important;
+  width: 0px !important;
+  min-width: 0px !important;
+  max-width: 0px !important;
+  padding: 0px !important;
+  border-width: 0px !important;
+  overflow: hidden !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
 /* Fixed-scale range chart styles */
 .fixed-scale-range-chart-cell {
   position: relative;
